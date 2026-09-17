@@ -1,0 +1,12 @@
+# MoonBit编译输出
+_build/
+.mooncakes/
+_coverage/
+
+# 测试覆盖率文件
+moonbit-coverage-*.txt
+
+# VSCode临时文件
+.vscode/
+*.swp
+*.swo

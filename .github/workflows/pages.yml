@@ -9,9 +9,6 @@ name: 部署网页版到 GitHub Pages
 on:
   push:
     branches: [main]
-    paths:
-      - "my_hackathon/web/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:

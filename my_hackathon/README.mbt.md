@@ -17,6 +17,8 @@ JSON 解析用的是官方库 `moonbitlang/core/json`，没有手写解析器。
 - **中文错误**：解析失败时说明原因，并给出出错的行列位置
 - **三种输入**：命令行参数、文件（自动剥 UTF-8 BOM）、标准输入管道
 - **退出码**：出错时退出码为 1，脚本能直接判断成功与否
+- **网页版**：双击 `web/index.html` 就有一个实时转换的界面。页面上的转换逻辑
+  不是用 JavaScript 重写的，而是同一份 MoonBit 代码编译成 JS 跑在浏览器里
 
 ## 命令行用法
 
@@ -68,6 +70,29 @@ moon run cmd/main -- --help
 ```
 
 出错时错误信息打到标准输出，退出码为 1，帮助和成功转换的退出码为 0。
+
+## 网页版
+
+`web/index.html` 是一个交互界面：左边贴 JSON，右边实时出表格，写错了直接在
+下面显示中文错误（带行列位置）。页面上方有五个一键示例。
+
+**直接双击 `web/index.html` 就能用**——不用装 npm、不用起服务器、不用构建。
+转换逻辑不是用 JavaScript 重写的，而是 `web/dist/web.js`：真正的 MoonBit 代码
+经 `moon build --target js` 编译出来的，页面调的就是它导出的 `convert()`。
+
+这几件事让「双击就能用」成立：
+
+| 做法 | 原因 |
+| --- | --- |
+| `format: "iife"` | ES module 在 `file://` 下会被 CORS 拦掉，classic script 不会 |
+| 产物提交进仓库 | 别人 clone 下来直接打开，不必先跑构建 |
+| 自己写迷你表格渲染器 | 不引 CDN 上的 marked.js，离线也能用 |
+
+改了 `web/web.mbt` 或库代码之后重新生成产物：
+
+```bash
+bash web/build.sh
+```
 
 ## 库用法
 
@@ -164,11 +189,16 @@ moon info    # 更新 .mbti 接口文件
 实测结果：
 
 ```text
-Total tests: 88, passed: 88, failed: 0.
+Total tests: 99, passed: 99, failed: 0.
 ```
 
-88 个用例 = 库的黑盒测试 31 + 库的白盒测试 35 + CLI 白盒测试 20 +
-README 里这两段可执行示例。`moon check` 与 `moon test` 都是零警告。
+99 个用例 = 库的黑盒测试 31 + 库的白盒测试 35 + CLI 白盒测试 20 +
+web 导出层白盒测试 11 + README 里这两段可执行示例。
+`moon check` 与 `moon test` 都是零警告。
+
+网页那部分的验证方式：用无头 Edge 把渲染后的 DOM 导出来，逐个核对边界用例
+（`a\|b` 的还原、带首尾空格的值、空数组、非法 JSON 的行列位置），
+比看截图可靠。
 
 依赖都是官方的：
 
@@ -179,6 +209,9 @@ README 里这两段可执行示例。`moon check` 与 `moon test` 都是零警�
 | `moonbitlang/x/fs` | 读文件 |
 | `moonbitlang/x/sys` | 设置退出码 |
 | `moonbitlang/async` | 读标准输入 |
+
+网页版没有额外依赖：`web` 包只 import 了库本身，编译到 `js` 后端不需要任何
+第三方包，页面也没有引任何 CDN。
 
 测试里的断言用的是内置的 `assert_eq`、`assert_true` 与 `fail`，不需要额外依赖。
 `cmd/main` 依赖 `moonbitlang/async`，而它只在 wasm 和 native 后端有实现，
@@ -191,3 +224,6 @@ README 里这两段可执行示例。`moon check` 与 `moon test` 都是零警�
 - `my_hackathon_wbtest.mbt` — 内部函数的白盒测试
 - `cmd/main/main.mbt` — 命令行工具
 - `cmd/main/main_wbtest.mbt` — 参数解析、选项组装、BOM 剥离的测试
+- `web/index.html`、`web/style.css`、`web/app.js` — 网页界面
+- `web/web.mbt` — 导出给 JavaScript 的那层，`web/dist/web.js` 是它的编译产物
+- `web/build.sh` — 重新生成 `web/dist/web.js`

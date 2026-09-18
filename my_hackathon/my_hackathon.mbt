@@ -7,10 +7,45 @@
 ///|
 /// 解析 JSON 文本。
 ///
-/// 成功时返回解析出的 `Json` 值；失败时返回一条可读的错误信息。
+/// 成功时返回解析出的 `Json` 值；失败时返回一条可读的中文错误信息。
 pub fn parse_json(input : String) -> Result[Json, String] {
-  let json = @json.parse(input) catch { err => return Err(err.to_string()) }
+  let json = @json.parse(input) catch {
+    @json.ParseError::InvalidEof =>
+      return Err("JSON 内容不完整，意外结束")
+    @json.ParseError::InvalidChar(pos, c) =>
+      return Err(format_position(pos) + "出现非法字符 '\{c}'")
+    @json.ParseError::InvalidNumber(pos, text) =>
+      return Err(format_position(pos) + "数字写法非法：\{text}")
+    @json.ParseError::InvalidIdentEscape(pos) =>
+      return Err(
+        format_position(pos) +
+        "转义序列非法（\\u 后面需要 4 位十六进制）",
+      )
+    @json.ParseError::DepthLimitExceeded =>
+      return Err("嵌套层数太深，超出解析器上限")
+  }
   Ok(json)
+}
+
+///|
+/// 把解析器的位置信息拼成「第 X 行第 Y 列」。
+///
+/// 解析器的 `column` 是 0 基的，展示给用户时加 1。
+fn format_position(pos : @json.Position) -> String {
+  "第 \{pos.line} 行第 \{pos.column + 1} 列"
+}
+
+///|
+/// 说明一个 JSON 值是什么类型，用于拼错误提示。
+fn type_name(json : Json) -> String {
+  match json {
+    Null => "null"
+    True | False => "布尔值"
+    Number(_) => "数字"
+    String(_) => "字符串"
+    Array(_) => "数组"
+    Object(_) => "对象"
+  }
 }
 
 ///|
@@ -86,8 +121,9 @@ fn json_to_cell(json : Json) -> String {
 ///|
 /// 把 JSON 文本转换成 Markdown 表格。
 ///
-/// 输入应当是「对象数组」：表头取所有对象键的并集并按字典序排序，
-/// 某一行缺少某个键时对应单元格留空。返回值结尾带一个换行。
+/// 输入可以是「对象数组」或「单个对象」（单个对象视为只有一行）：
+/// 表头取所有对象键的并集并按字典序排序，某一行缺少某个键时对应单元格留空。
+/// 返回值结尾带一个换行。
 pub fn json_to_markdown_table(input : String) -> Result[String, String] {
   let json = match parse_json(input) {
     Ok(json) => json
@@ -97,15 +133,22 @@ pub fn json_to_markdown_table(input : String) -> Result[String, String] {
     Array(items) => {
       let rows : Array[Map[String, Json]] = []
       for item in items {
+        let kind = type_name(item)
         match item {
           Object(obj) => rows.push(obj)
           _ =>
-            return Err("数组里出现了非对象元素，无法转成表格")
+            return Err(
+              "数组里出现了\{kind}，只有对象才能作为表格的一行",
+            )
         }
       }
       rows
     }
-    _ => return Err("输入需要是对象数组")
+    Object(map) => [map] // 单个对象当成「只有一行」的表格
+    _ =>
+      return Err(
+        "输入需要是对象数组或单个对象，当前是\{type_name(json)}",
+      )
   }
   let headers = collect_keys(rows)
   if headers.length() == 0 {

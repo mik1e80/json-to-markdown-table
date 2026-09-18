@@ -74,17 +74,41 @@ test "json_to_markdown_table 空数组得到空表格" {
 }
 
 ///|
-test "json_to_markdown_table 数组含非对象时返回错误" {
+test "json_to_markdown_table 数组含非对象时报出具体类型" {
   match @my_hackathon.json_to_markdown_table("[{\"a\":1},2]") {
     Ok(md) => @test.fail("数组里混入非对象不该成功：\{md}")
-    Err(msg) => assert_true(msg.length() > 0)
+    Err(msg) => assert_true(msg.contains("数字"))
   }
 }
 
 ///|
-test "json_to_markdown_table 顶层不是数组时返回错误" {
-  match @my_hackathon.json_to_markdown_table("{\"name\":\"张三\"}") {
-    Ok(md) => @test.fail("单对象目前不支持，不该成功：\{md}")
-    Err(msg) => assert_true(msg.length() > 0)
+test "json_to_markdown_table 单个对象转成一行表格" {
+  @test.assert_eq(
+    table_of("{\"name\":\"张三\",\"age\":20}"),
+    "| age | name |\n| --- | --- |\n| 20 | 张三 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 顶层是字符串时报出具体类型" {
+  match @my_hackathon.json_to_markdown_table("\"just a string\"") {
+    Ok(md) => @test.fail("字符串不该转成表格：\{md}")
+    Err(msg) => assert_true(msg.contains("字符串"))
+  }
+}
+
+///|
+test "非法 JSON 会得到中文错误信息" {
+  match @my_hackathon.parse_json("[{\"a\":") {
+    Ok(_) => @test.fail("非法 JSON 不该解析成功")
+    Err(msg) => assert_true(msg.contains("不完整"))
+  }
+}
+
+///|
+test "非法字符会带上行列位置" {
+  match @my_hackathon.parse_json("[1, @]") {
+    Ok(_) => @test.fail("非法 JSON 不该解析成功")
+    Err(msg) => assert_true(msg.contains("行") && msg.contains("列"))
   }
 }

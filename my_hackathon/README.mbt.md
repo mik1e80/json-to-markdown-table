@@ -48,7 +48,7 @@ test {
   match json_to_markdown_table(input) {
     Ok(md) =>
       assert_true(md == "| age | name |\n| --- | --- |\n| 20 | 张三 |\n")
-    Err(_) => @test.fail("示例不该失败")
+    Err(_) => fail("示例不该失败")
   }
 }
 ```
@@ -82,6 +82,15 @@ moon test    # 跑测试
 moon fmt     # 格式化
 moon info    # 更新 .mbti 接口文件
 ```
+
+实测结果：
+
+```text
+Total tests: 43, passed: 43, failed: 0.
+```
+
+`moon check` 与 `moon test` 都是零警告。整个模块只依赖 `moonbitlang/core/json`
+一个包——测试里的断言用的是内置的 `assert_eq` 与 `fail`，不需要额外依赖。
 
 ## 项目结构
 

@@ -2,37 +2,37 @@
 
 ///|
 test "escape_cell 转义竖线" {
-  @test.assert_eq(escape_cell("a|b"), "a\\|b")
+  assert_eq(escape_cell("a|b"), "a\\|b")
 }
 
 ///|
 test "escape_cell 把换行转成 br 标签" {
-  @test.assert_eq(escape_cell("第一行\n第二行"), "第一行<br>第二行")
+  assert_eq(escape_cell("第一行\n第二行"), "第一行<br>第二行")
 }
 
 ///|
 test "escape_cell 丢弃回车符" {
-  @test.assert_eq(escape_cell("a\r\nb"), "a<br>b")
+  assert_eq(escape_cell("a\r\nb"), "a<br>b")
 }
 
 ///|
 test "escape_cell 普通文本原样返回" {
-  @test.assert_eq(escape_cell("张三"), "张三")
+  assert_eq(escape_cell("张三"), "张三")
 }
 
 ///|
 test "escape_cell 空串返回空串" {
-  @test.assert_eq(escape_cell(""), "")
+  assert_eq(escape_cell(""), "")
 }
 
 ///|
 test "render_row 拼接并转义单元格" {
-  @test.assert_eq(render_row(["姓名", "a|b"]), "| 姓名 | a\\|b |")
+  assert_eq(render_row(["姓名", "a|b"]), "| 姓名 | a\\|b |")
 }
 
 ///|
 test "render_row 单列" {
-  @test.assert_eq(render_row(["仅一列"]), "| 仅一列 |")
+  assert_eq(render_row(["仅一列"]), "| 仅一列 |")
 }
 
 ///|
@@ -44,13 +44,13 @@ fn rows_of(input : String) -> Array[Map[String, Json]] raise {
       for item in arr {
         match item {
           Object(obj) => rows.push(obj)
-          _ => @test.fail("测试数据里出现了非对象元素")
+          _ => fail("测试数据里出现了非对象元素")
         }
       }
       rows
     }
-    Ok(_) => @test.fail("测试数据应当是数组")
-    Err(msg) => @test.fail("测试数据解析失败：\{msg}")
+    Ok(_) => fail("测试数据应当是数组")
+    Err(msg) => fail("测试数据解析失败：\{msg}")
   }
 }
 
@@ -59,7 +59,7 @@ test "collect_keys 合并多个对象的键并按字典序排序" {
   let keys = collect_keys(
     rows_of("[{\"name\":\"张三\"},{\"age\":20,\"name\":\"李四\"}]"),
   )
-  @test.assert_eq(keys, ["age", "name"])
+  assert_eq(keys, ["age", "name"])
 }
 
 ///|
@@ -67,28 +67,28 @@ test "collect_keys 保留只在后面出现的键" {
   let keys = collect_keys(
     rows_of("[{\"name\":\"张三\"},{\"city\":\"北京\"}]"),
   )
-  @test.assert_eq(keys, ["city", "name"])
+  assert_eq(keys, ["city", "name"])
 }
 
 ///|
 test "collect_keys 对空数组返回空表头" {
   let empty : Array[String] = []
-  @test.assert_eq(collect_keys(rows_of("[]")), empty)
+  assert_eq(collect_keys(rows_of("[]")), empty)
 }
 
 ///|
 test "collect_keys 的结果与键出现顺序无关" {
   let a = collect_keys(rows_of("[{\"b\":1,\"a\":2},{\"c\":3}]"))
   let b = collect_keys(rows_of("[{\"c\":3},{\"a\":2,\"b\":1}]"))
-  @test.assert_eq(a, b)
+  assert_eq(a, b)
 }
 
 ///|
 test "collect_keys 处理中文键时结果稳定" {
   let a = collect_keys(rows_of("[{\"姓名\":\"张三\",\"年龄\":20}]"))
   let b = collect_keys(rows_of("[{\"姓名\":\"张三\",\"年龄\":20}]"))
-  @test.assert_eq(a, b)
-  @test.assert_eq(a.length(), 2)
+  assert_eq(a, b)
+  assert_eq(a.length(), 2)
 }
 
 ///|
@@ -96,34 +96,34 @@ test "collect_keys 处理中文键时结果稳定" {
 fn json_of(input : String) -> Json raise {
   match parse_json(input) {
     Ok(json) => json
-    Err(msg) => @test.fail("测试数据解析失败：\{msg}")
+    Err(msg) => fail("测试数据解析失败：\{msg}")
   }
 }
 
 ///|
 test "json_to_cell 把 null 渲染成空串" {
-  @test.assert_eq(json_to_cell(json_of("null")), "")
+  assert_eq(json_to_cell(json_of("null")), "")
 }
 
 ///|
 test "json_to_cell 渲染布尔值" {
-  @test.assert_eq(json_to_cell(json_of("true")), "true")
-  @test.assert_eq(json_to_cell(json_of("false")), "false")
+  assert_eq(json_to_cell(json_of("true")), "true")
+  assert_eq(json_to_cell(json_of("false")), "false")
 }
 
 ///|
 test "json_to_cell 渲染整数" {
-  @test.assert_eq(json_to_cell(json_of("20")), "20")
+  assert_eq(json_to_cell(json_of("20")), "20")
 }
 
 ///|
 test "json_to_cell 普通数字按 Double 文本输出" {
-  @test.assert_eq(json_to_cell(json_of("1.50")), "1.5")
+  assert_eq(json_to_cell(json_of("1.50")), "1.5")
 }
 
 ///|
 test "json_to_cell 超出双精度时保留数字的原始写法" {
-  @test.assert_eq(
+  assert_eq(
     json_to_cell(json_of("12345678901234567890")),
     "12345678901234567890",
   )
@@ -131,12 +131,12 @@ test "json_to_cell 超出双精度时保留数字的原始写法" {
 
 ///|
 test "json_to_cell 字符串原样返回" {
-  @test.assert_eq(json_to_cell(json_of("\"张三\"")), "张三")
+  assert_eq(json_to_cell(json_of("\"张三\"")), "张三")
 }
 
 ///|
 test "json_to_cell 把嵌套对象压成一行 JSON" {
-  @test.assert_eq(
+  assert_eq(
     json_to_cell(json_of("{\"city\":\"北京\"}")),
     "{\"city\":\"北京\"}",
   )
@@ -144,5 +144,5 @@ test "json_to_cell 把嵌套对象压成一行 JSON" {
 
 ///|
 test "json_to_cell 把数组压成一行 JSON" {
-  @test.assert_eq(json_to_cell(json_of("[1,2,3]")), "[1,2,3]")
+  assert_eq(json_to_cell(json_of("[1,2,3]")), "[1,2,3]")
 }

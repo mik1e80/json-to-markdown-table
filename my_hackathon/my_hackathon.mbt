@@ -55,6 +55,9 @@ fn type_name(json : Json) -> String {
 ///|
 /// 转义 Markdown 表格单元格的内容。
 ///
+/// - `\` 转义为 `\\`。必须先于 `|` 处理：值里本来就有反斜杠时（例如 `a\|b`），
+///   若只转义竖线会得到 `a\\|b`，其中的 `\\` 在 Markdown 里是「一个字面反斜杠」，
+///   后面的 `|` 就重新变成未转义的列分隔符，表格会被撑破
 /// - `|` 会把表格截断，转义为 `\|`
 /// - 换行会破坏表格结构（一行一行的 Markdown 表格），转成 `<br>`
 /// - `\r` 直接丢弃，CRLF 的换行交给 `\n` 处理
@@ -62,6 +65,7 @@ fn escape_cell(s : String) -> String {
   let parts : Array[String] = []
   for c in s {
     match c {
+      '\\' => parts.push("\\\\")
       '|' => parts.push("\\|")
       '\n' => parts.push("<br>")
       '\r' => ()

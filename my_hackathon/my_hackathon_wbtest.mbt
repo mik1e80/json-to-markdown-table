@@ -26,6 +26,18 @@ test "escape_cell 空串返回空串" {
 }
 
 ///|
+test "escape_cell 转义反斜杠" {
+  // 输入 a\b（3 个字符）→ 输出 a\\b（4 个字符）
+  assert_eq(escape_cell("a\\b"), "a\\\\b")
+}
+
+///|
+test "escape_cell 反斜杠紧跟竖线" {
+  // 输入 a\|b → 反斜杠和竖线都要转义，输出 a\\\|b
+  assert_eq(escape_cell("a\\|b"), "a\\\\\\|b")
+}
+
+///|
 test "render_row 拼接并转义单元格" {
   assert_eq(render_row(["姓名", "a|b"]), "| 姓名 | a\\|b |")
 }

@@ -146,6 +146,16 @@ test "json_to_markdown_table 布尔与 null" {
 }
 
 ///|
+test "json_to_markdown_table 值里的反斜杠与竖线组合" {
+  // JSON 里的 \\ 解析成一个反斜杠，所以值是 a\|b；
+  // 输出必须把反斜杠也转义，否则 \\ 之后的 | 会重新变成列分隔符
+  assert_eq(
+    table_of("[{\"note\":\"a\\\\|b\"}]"),
+    "| note |\n| --- |\n| a\\\\\\|b |\n",
+  )
+}
+
+///|
 test "json_to_markdown_table 表头里的竖线也会被转义" {
   assert_eq(table_of("[{\"a|b\":1}]"), "| a\\|b |\n| --- |\n| 1 |\n")
 }

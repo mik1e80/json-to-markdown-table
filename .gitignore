@@ -10,3 +10,6 @@ moonbit-coverage-*.txt
 .vscode/
 *.swp
 *.swo
+
+# 编辑器/AI 工具的本地配置
+.claude/

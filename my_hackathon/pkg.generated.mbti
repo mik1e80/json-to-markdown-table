@@ -2,6 +2,8 @@
 package "username/my_hackathon"
 
 // Values
+pub fn json_to_markdown_table(String) -> Result[String, String]
+
 pub fn parse_json(String) -> Result[Json, String]
 
 // Errors

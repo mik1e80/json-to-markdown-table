@@ -112,3 +112,77 @@ test "非法字符会带上行列位置" {
     Err(msg) => assert_true(msg.contains("行") && msg.contains("列"))
   }
 }
+
+///|
+test "json_to_markdown_table 中文键与中文值" {
+  @test.assert_eq(
+    table_of("[{\"姓名\":\"张三\",\"年龄\":20}]"),
+    "| 姓名 | 年龄 |\n| --- | --- |\n| 张三 | 20 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 嵌套对象压成一行 JSON" {
+  @test.assert_eq(
+    table_of("[{\"name\":\"张三\",\"addr\":{\"city\":\"北京\"}}]"),
+    "| addr | name |\n| --- | --- |\n| {\"city\":\"北京\"} | 张三 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 值里同时有竖线和换行" {
+  @test.assert_eq(
+    table_of("[{\"note\":\"a|b\\nc\"}]"),
+    "| note |\n| --- |\n| a\\|b<br>c |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 布尔与 null" {
+  @test.assert_eq(
+    table_of("[{\"ok\":true,\"extra\":null}]"),
+    "| extra | ok |\n| --- | --- |\n|  | true |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 表头里的竖线也会被转义" {
+  @test.assert_eq(table_of("[{\"a|b\":1}]"), "| a\\|b |\n| --- |\n| 1 |\n")
+}
+
+///|
+test "json_to_markdown_table 数组里含 null 时报出类型" {
+  match @my_hackathon.json_to_markdown_table("[{\"a\":1},null]") {
+    Ok(md) => @test.fail("不该成功：\{md}")
+    Err(msg) => assert_true(msg.contains("null"))
+  }
+}
+
+///|
+test "json_to_markdown_table 全是空对象时返回空串" {
+  @test.assert_eq(table_of("[{},{}]"), "")
+}
+
+///|
+test "json_to_markdown_table 单个空对象返回空串" {
+  @test.assert_eq(table_of("{}"), "")
+}
+
+///|
+test "嵌套过深会给出提示" {
+  let mut input = ""
+  let mut i = 0
+  while i < 1030 {
+    input = input + "["
+    i = i + 1
+  }
+  let mut j = 0
+  while j < 1030 {
+    input = input + "]"
+    j = j + 1
+  }
+  match @my_hackathon.parse_json(input) {
+    Ok(_) => @test.fail("这么深的嵌套不该解析成功")
+    Err(msg) => assert_true(msg.contains("嵌套"))
+  }
+}

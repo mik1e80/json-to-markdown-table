@@ -8,6 +8,10 @@
 /// 解析 JSON 文本。
 ///
 /// 成功时返回解析出的 `Json` 值；失败时返回一条可读的中文错误信息。
+///
+/// 注：`InvalidNumber` 与 `InvalidIdentEscape` 两个变体在当前版本的官方解析器里
+/// 没有被抛出过（数字和转义写错时报的是 `InvalidChar`），但错误类型里有它们，
+/// 这里一并给出提示，以防将来解析器改用这两个变体。
 pub fn parse_json(input : String) -> Result[Json, String] {
   let json = @json.parse(input) catch {
     @json.ParseError::InvalidEof =>
@@ -78,6 +82,9 @@ fn render_row(cells : Array[String]) -> String {
 ///
 /// 表头取「并集」而不是只看第一行，这样后面才出现的键不会丢；
 /// 排序则保证同样的数据每次得到完全一样的表格。
+///
+/// 注意用 `lexical_compare` 而不是默认的 `sort`：String 的 `Compare` 是
+/// shortlex 序（先比长度再比字符），排出来不是字典序。
 fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
   let seen : Map[String, Unit] = Map([])
   let keys : Array[String] = []
@@ -89,7 +96,7 @@ fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
       }
     }
   }
-  keys.sort()
+  keys.sort_by(fn(a, b) { a.lexical_compare(b) })
   keys
 }
 

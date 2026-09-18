@@ -38,7 +38,7 @@ test "json_to_markdown_table 转换对象数组" {
   let input = "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"},{\"name\":\"李四\",\"age\":22,\"city\":\"上海\"}]"
   assert_eq(
     table_of(input),
-    "| age | city | name |\n| --- | --- | --- |\n| 20 | 北京 | 张三 |\n| 22 | 上海 | 李四 |\n",
+    "| name | age | city |\n| --- | --- | --- |\n| 张三 | 20 | 北京 |\n| 李四 | 22 | 上海 |\n",
   )
 }
 
@@ -47,7 +47,7 @@ test "json_to_markdown_table 三行数据" {
   let input = "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"},{\"name\":\"李四\",\"age\":22,\"city\":\"上海\"},{\"name\":\"王五\",\"age\":21,\"city\":\"广州\"}]"
   assert_eq(
     table_of(input),
-    "| age | city | name |\n| --- | --- | --- |\n| 20 | 北京 | 张三 |\n| 22 | 上海 | 李四 |\n| 21 | 广州 | 王五 |\n",
+    "| name | age | city |\n| --- | --- | --- |\n| 张三 | 20 | 北京 |\n| 李四 | 22 | 上海 |\n| 王五 | 21 | 广州 |\n",
   )
 }
 
@@ -56,7 +56,7 @@ test "json_to_markdown_table 缺失的键留空" {
   let input = "[{\"name\":\"张三\",\"age\":20},{\"name\":\"李四\"}]"
   assert_eq(
     table_of(input),
-    "| age | name |\n| --- | --- |\n| 20 | 张三 |\n|  | 李四 |\n",
+    "| name | age |\n| --- | --- |\n| 张三 | 20 |\n| 李四 |  |\n",
   )
 }
 
@@ -85,7 +85,7 @@ test "json_to_markdown_table 数组含非对象时报出具体类型" {
 test "json_to_markdown_table 单个对象转成一行表格" {
   assert_eq(
     table_of("{\"name\":\"张三\",\"age\":20}"),
-    "| age | name |\n| --- | --- |\n| 20 | 张三 |\n",
+    "| name | age |\n| --- | --- |\n| 张三 | 20 |\n",
   )
 }
 
@@ -125,7 +125,7 @@ test "json_to_markdown_table 中文键与中文值" {
 test "json_to_markdown_table 嵌套对象压成一行 JSON" {
   assert_eq(
     table_of("[{\"name\":\"张三\",\"addr\":{\"city\":\"北京\"}}]"),
-    "| addr | name |\n| --- | --- |\n| {\"city\":\"北京\"} | 张三 |\n",
+    "| name | addr |\n| --- | --- |\n| 张三 | {\"city\":\"北京\"} |\n",
   )
 }
 
@@ -141,7 +141,7 @@ test "json_to_markdown_table 值里同时有竖线和换行" {
 test "json_to_markdown_table 布尔与 null" {
   assert_eq(
     table_of("[{\"ok\":true,\"extra\":null}]"),
-    "| extra | ok |\n| --- | --- |\n|  | true |\n",
+    "| ok | extra |\n| --- | --- |\n| true |  |\n",
   )
 }
 
@@ -176,6 +176,21 @@ test "json_to_markdown_table 全是空对象时返回空串" {
 ///|
 test "json_to_markdown_table 单个空对象返回空串" {
   assert_eq(table_of("{}"), "")
+}
+
+///|
+test "json_to_markdown_table_with 可以按字典序排列表头" {
+  let options : @my_hackathon.Options = { sort_columns: true, }
+  match
+    @my_hackathon.json_to_markdown_table_with(
+      "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"}]", options,
+    ) {
+    Ok(md) =>
+      assert_eq(
+        md, "| age | city | name |\n| --- | --- | --- |\n| 20 | 北京 | 张三 |\n",
+      )
+    Err(msg) => fail("转换不该失败：\{msg}")
+  }
 }
 
 ///|

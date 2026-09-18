@@ -67,9 +67,18 @@ fn rows_of(input : String) -> Array[Map[String, Json]] raise {
 }
 
 ///|
-test "collect_keys 合并多个对象的键并按字典序排序" {
+test "collect_keys 合并多个对象的键并保留出现顺序" {
   let keys = collect_keys(
     rows_of("[{\"name\":\"张三\"},{\"age\":20,\"name\":\"李四\"}]"),
+  )
+  assert_eq(keys, ["name", "age"])
+}
+
+///|
+test "collect_keys 排序开关打开时按字典序" {
+  let keys = collect_keys(
+    rows_of("[{\"name\":\"张三\"},{\"age\":20,\"name\":\"李四\"}]"),
+    sort=true,
   )
   assert_eq(keys, ["age", "name"])
 }
@@ -79,7 +88,7 @@ test "collect_keys 保留只在后面出现的键" {
   let keys = collect_keys(
     rows_of("[{\"name\":\"张三\"},{\"city\":\"北京\"}]"),
   )
-  assert_eq(keys, ["city", "name"])
+  assert_eq(keys, ["name", "city"])
 }
 
 ///|
@@ -89,9 +98,15 @@ test "collect_keys 对空数组返回空表头" {
 }
 
 ///|
-test "collect_keys 的结果与键出现顺序无关" {
-  let a = collect_keys(rows_of("[{\"b\":1,\"a\":2},{\"c\":3}]"))
-  let b = collect_keys(rows_of("[{\"c\":3},{\"a\":2,\"b\":1}]"))
+test "collect_keys 默认按各键首次出现的先后排列" {
+  let keys = collect_keys(rows_of("[{\"b\":1,\"a\":2},{\"c\":3}]"))
+  assert_eq(keys, ["b", "a", "c"])
+}
+
+///|
+test "collect_keys 打开排序后结果与键出现顺序无关" {
+  let a = collect_keys(rows_of("[{\"b\":1,\"a\":2},{\"c\":3}]"), sort=true)
+  let b = collect_keys(rows_of("[{\"c\":3},{\"a\":2,\"b\":1}]"), sort=true)
   assert_eq(a, b)
 }
 

@@ -4,11 +4,17 @@ package "username/my_hackathon"
 // Values
 pub fn json_to_markdown_table(String) -> Result[String, String]
 
+pub fn json_to_markdown_table_with(String, Options) -> Result[String, String]
+
 pub fn parse_json(String) -> Result[Json, String]
 
 // Errors
 
 // Types and methods
+pub(all) struct Options {
+  sort_columns : Bool
+} derive(Eq)
+pub fn Options::default() -> Self
 
 // Type aliases
 

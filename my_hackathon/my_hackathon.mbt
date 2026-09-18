@@ -1,8 +1,9 @@
 // json-to-markdown-table：把 JSON 数据转换成 Markdown 表格。
 //
-// 对外提供两个入口：
+// 对外提供三个入口：
 // - parse_json：解析 JSON 文本
 // - json_to_markdown_table：一步完成「解析 + 转换」
+// - json_to_markdown_table_with：同上，可传入 Options 调整行为
 
 ///|
 /// 解析 JSON 文本。
@@ -82,14 +83,20 @@ fn render_row(cells : Array[String]) -> String {
 }
 
 ///|
-/// 收集所有行出现过的键，去重后按字典序排序。
+/// 收集所有行出现过的键，去重。
 ///
-/// 表头取「并集」而不是只看第一行，这样后面才出现的键不会丢；
-/// 排序则保证同样的数据每次得到完全一样的表格。
+/// 表头取「并集」而不是只看第一行，这样后面才出现的键不会丢。
 ///
-/// 注意用 `lexical_compare` 而不是默认的 `sort`：String 的 `Compare` 是
-/// shortlex 序（先比长度再比字符），排出来不是字典序。
-fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
+/// 默认保留键的**出现顺序**：`Map` 本身是保插入序的，而 JSON 解析器是按
+/// 遇到顺序插入键的，所以这里的顺序就是原 JSON 里的书写顺序，最贴近直觉。
+/// `sort` 为真时改按字典序排列，用于需要跨数据源稳定输出的场景。
+///
+/// 排序注意用 `lexical_compare` 而不是默认的 `sort_by`：String 的 `Compare`
+/// 是 shortlex 序（先比长度再比字符），排出来不是字典序。
+fn collect_keys(
+  rows : Array[Map[String, Json]],
+  sort? : Bool = false,
+) -> Array[String] {
   let seen : Map[String, Unit] = Map([])
   let keys : Array[String] = []
   for row in rows {
@@ -100,7 +107,9 @@ fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
       }
     }
   }
-  keys.sort_by(fn(a, b) { a.lexical_compare(b) })
+  if sort {
+    keys.sort_by(fn(a, b) { a.lexical_compare(b) })
+  }
   keys
 }
 
@@ -130,12 +139,38 @@ fn json_to_cell(json : Json) -> String {
 }
 
 ///|
-/// 把 JSON 文本转换成 Markdown 表格。
+/// 转换选项。
+///
+/// - `sort_columns`：表头是否按字典序排序。默认 `false`，即保留键在 JSON
+///   里出现的顺序，跟原始数据的书写顺序一致
+pub(all) struct Options {
+  sort_columns : Bool
+} derive(Eq)
+
+///|
+/// 默认选项：表头按出现顺序。
+pub fn Options::default() -> Options {
+  { sort_columns: false, }
+}
+
+///|
+/// 把 JSON 文本转换成 Markdown 表格，使用默认选项。
+///
+/// 等价于 `json_to_markdown_table_with(input, Options::default())`。
+pub fn json_to_markdown_table(input : String) -> Result[String, String] {
+  json_to_markdown_table_with(input, Options::default())
+}
+
+///|
+/// 把 JSON 文本转换成 Markdown 表格，可指定选项。
 ///
 /// 输入可以是「对象数组」或「单个对象」（单个对象视为只有一行）：
-/// 表头取所有对象键的并集并按字典序排序，某一行缺少某个键时对应单元格留空。
+/// 表头取所有对象键的并集，某一行缺少某个键时对应单元格留空。
 /// 返回值结尾带一个换行。
-pub fn json_to_markdown_table(input : String) -> Result[String, String] {
+pub fn json_to_markdown_table_with(
+  input : String,
+  options : Options,
+) -> Result[String, String] {
   let json = match parse_json(input) {
     Ok(json) => json
     Err(msg) => return Err(msg)
@@ -161,7 +196,7 @@ pub fn json_to_markdown_table(input : String) -> Result[String, String] {
         "输入需要是对象数组或单个对象，当前是\{type_name(json)}",
       )
   }
-  let headers = collect_keys(rows)
+  let headers = collect_keys(rows, sort=options.sort_columns)
   if headers.length() == 0 {
     // 空数组，或数组里全是空对象：没有列可展示
     return Ok("")

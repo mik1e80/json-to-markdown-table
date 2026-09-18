@@ -1,7 +1,7 @@
 # JSON → Markdown 表格
 
 把 JSON 对象数组转换成 Markdown 表格的 MoonBit 库，附带一个命令行工具。
-JSON 解析使用官方库 `moonbitlang/core/json`，没有手写解析器。
+JSON 解析用的是官方库 `moonbitlang/core/json`，没有手写解析器。
 
 ## 特性
 
@@ -15,14 +15,22 @@ JSON 解析使用官方库 `moonbitlang/core/json`，没有手写解析器。
   值里带这些字符也撑不破表格
 - **对齐可选**：整张表可以左对齐、居中或右对齐
 - **中文错误**：解析失败时说明原因，并给出出错的行列位置
+- **三种输入**：命令行参数、文件（自动剥 UTF-8 BOM）、标准输入管道
+- **退出码**：出错时退出码为 1，脚本能直接判断成功与否
 
 ## 命令行用法
 
 ```bash
-# 转换命令行参数里的 JSON
-moon run cmd/main '[{"name":"张三","age":20,"city":"北京"},{"name":"李四","age":22,"city":"上海"}]'
+# 直接写在命令行上
+moon run cmd/main '[{"name":"张三","age":20,"city":"北京"}]'
 
-# 不带参数时，打印用法和内置示例
+# 从文件读（自动剥掉 UTF-8 BOM）
+moon run cmd/main --file data.json
+
+# 从管道读
+cat data.json | moon run cmd/main --stdin
+
+# 什么都不给：打印帮助和一个内置示例
 moon run cmd/main
 ```
 
@@ -32,8 +40,34 @@ moon run cmd/main
 | name | age | city |
 | --- | --- | --- |
 | 张三 | 20 | 北京 |
-| 李四 | 22 | 上海 |
 ```
+
+参数一览：
+
+| 参数 | 说明 |
+| --- | --- |
+| `<JSON>` | 直接写在命令行上的 JSON 文本 |
+| `-f, --file <路径>` | 从文件读 JSON，自动剥掉开头的 UTF-8 BOM |
+| `--stdin` | 从标准输入读 JSON，配合管道用 |
+| `--align <方式>` | 对齐方式：`left`（默认）/ `center` / `right` |
+| `--no-flatten` | 不展平嵌套对象，压成一行 JSON 放进单元格 |
+| `--sort` | 表头改按字典序排列 |
+| `-h, --help` | 显示帮助 |
+
+位置参数、`--file`、`--stdin` 三者互斥，同时给两个会报错。
+
+```bash
+moon run cmd/main --align center --file data.json
+moon run cmd/main --no-flatten --sort '[{"a":{"b":1}}]'
+```
+
+`-h` / `--help` 和 `moon run` 自己的选项重名，要透传给程序得用 `--` 隔开：
+
+```bash
+moon run cmd/main -- --help
+```
+
+出错时错误信息打到标准输出，退出码为 1，帮助和成功转换的退出码为 0。
 
 ## 库用法
 
@@ -130,15 +164,30 @@ moon info    # 更新 .mbti 接口文件
 实测结果：
 
 ```text
-Total tests: 43, passed: 43, failed: 0.
+Total tests: 88, passed: 88, failed: 0.
 ```
 
-`moon check` 与 `moon test` 都是零警告。整个模块只依赖 `moonbitlang/core/json`
-一个包——测试里的断言用的是内置的 `assert_eq` 与 `fail`，不需要额外依赖。
+88 个用例 = 库的黑盒测试 31 + 库的白盒测试 35 + CLI 白盒测试 20 +
+README 里这两段可执行示例。`moon check` 与 `moon test` 都是零警告。
+
+依赖都是官方的：
+
+| 包 | 用途 |
+| --- | --- |
+| `moonbitlang/core/json` | JSON 解析（库本体唯一依赖） |
+| `moonbitlang/core/argparse` | 命令行参数解析 |
+| `moonbitlang/x/fs` | 读文件 |
+| `moonbitlang/x/sys` | 设置退出码 |
+| `moonbitlang/async` | 读标准输入 |
+
+测试里的断言用的是内置的 `assert_eq`、`assert_true` 与 `fail`，不需要额外依赖。
+`cmd/main` 依赖 `moonbitlang/async`，而它只在 wasm 和 native 后端有实现，
+所以命令行工具限定在这两个后端构建；库本身没有这个限制。
 
 ## 项目结构
 
 - `my_hackathon.mbt` — 库实现
-- `cmd/main/` — 命令行工具
 - `my_hackathon_test.mbt` — 公开 API 的黑盒测试
 - `my_hackathon_wbtest.mbt` — 内部函数的白盒测试
+- `cmd/main/main.mbt` — 命令行工具
+- `cmd/main/main_wbtest.mbt` — 参数解析、选项组装、BOM 剥离的测试

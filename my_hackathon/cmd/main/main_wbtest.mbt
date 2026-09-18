@@ -122,17 +122,58 @@ test "parse 认得出 --no-flatten、--sort 与 -f" {
 }
 
 ///|
-test "parse 没给开关时两个 flag 都是假" {
+test "parse 认得出 --stdin" {
+  let matches = command().parse(argv=["--stdin"])
+  assert_true(matches.flags.get("stdin") == Some(true))
+}
+
+///|
+test "parse 没给开关时几个 flag 都是假" {
   let matches = command().parse(argv=["[{\"a\":1}]"])
   assert_false(matches.flags.get("no-flatten") == Some(true))
   assert_false(matches.flags.get("sort") == Some(true))
+  assert_false(matches.flags.get("stdin") == Some(true))
   assert_false(matches.flags.get("help") == Some(true))
 }
 
 ///|
-test "帮助文本列出了全部参数" {
+test "help_text 列出了全部参数" {
   let help = help_text(command())
-  for name in ["--no-flatten", "--sort", "--file", "--align", "-h"] {
+  for name in ["--no-flatten", "--sort", "--stdin", "--file", "--align", "-h"] {
     assert_true(help.contains(name))
+  }
+}
+
+///|
+test "read_input 只给管道时用它，并剥掉 BOM" {
+  match read_input("", "", Some("\u{FEFF}[{\"a\":1}]")) {
+    Ok(Some(text)) => assert_eq(text, "[{\"a\":1}]")
+    Ok(None) => fail("给了管道输入就不该返回 None")
+    Err(msg) => fail("不该失败：\{msg}")
+  }
+}
+
+///|
+test "read_input 三个来源都没给时返回 None" {
+  match read_input("", "", None) {
+    Ok(None) => ()
+    Ok(Some(text)) => fail("没输入不该有内容：\{text}")
+    Err(msg) => fail("不该失败：\{msg}")
+  }
+}
+
+///|
+test "read_input 同时给多个来源会报错" {
+  let cases : Array[(String, String, String?)] = [
+    ("data.json", "[{\"a\":1}]", None),
+    ("data.json", "", Some("[{\"a\":1}]")),
+    ("", "[{\"a\":1}]", Some("[{\"b\":2}]")),
+  ]
+  for case in cases {
+    let (file, inline, piped) = case
+    match read_input(file, inline, piped) {
+      Ok(_) => fail("同时给多个来源不该成功")
+      Err(msg) => assert_true(msg.contains("只能给一个"))
+    }
   }
 }

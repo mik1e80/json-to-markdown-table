@@ -1,8 +1,8 @@
 // 命令行入口：读取 JSON，输出 Markdown 表格。
 //
 // 参数解析交给官方库 moonbitlang/core/argparse，文件读取交给 moonbitlang/x/fs，
-// 退出码用 moonbitlang/x/sys。输入来源有三个：位置参数、--file、以及两者都不给
-// 时的内置示例。
+// 读标准输入用 moonbitlang/async，退出码用 moonbitlang/x/sys。
+// 输入来源有三个：位置参数、--file、--stdin；都不给时打印帮助和内置示例。
 
 ///|
 /// 内置示例，无参数运行时展示效果。
@@ -25,6 +25,10 @@ fn command() -> @argparse.Command {
       @argparse.FlagArg(
         "sort",
         about="表头按字典序排列（默认按键在 JSON 里出现的顺序）",
+      ),
+      @argparse.FlagArg(
+        "stdin",
+        about="从标准输入读取 JSON（配合管道用）",
       ),
       @argparse.FlagArg("help", short='h', about="显示这份帮助"),
     ],
@@ -54,8 +58,10 @@ fn help_text(cmd : @argparse.Command) -> String {
   "\n示例：\n" +
   "  moon run cmd/main '[{\"name\":\"张三\",\"age\":20}]'\n" +
   "  moon run cmd/main --file data.json --align center\n" +
+  "  cat data.json | moon run cmd/main --stdin\n" +
   "  moon run cmd/main --no-flatten --sort '[{\"a\":{\"b\":1}}]'\n" +
-  "\n没有位置参数也没有 --file 时，打印这份帮助和一个内置示例。\n"
+  "\n位置参数、--file、--stdin 三者只能给一个；一个都不给时，\n" +
+  "打印这份帮助和一个内置示例。\n"
 }
 
 ///|
@@ -92,8 +98,8 @@ fn build_options(
 /// 去掉文本开头的 BOM。
 ///
 /// 用 UTF-8 保存的 JSON 文件常常带 BOM（字节 `EF BB BF`），解码出来是
-/// U+FEFF 一个字符。JSON 解析器不认它，会报非法字符，所以读文件后先剥掉。
-/// `substring` 和 `code_unit_at` 用的是同一套下标（UTF-16 码元），BOM 正好占 1 个。
+/// U+FEFF 一个字符。JSON 解析器不认它，会报非法字符，所以读进来后先剥掉。
+/// `text[1:]` 和 `code_unit_at` 用的是同一套下标（UTF-16 码元），BOM 正好占 1 个。
 fn strip_bom(text : String) -> String {
   if text.length() > 0 && text.code_unit_at(0) == 0xFEFF {
     text[1:].to_owned()
@@ -116,12 +122,35 @@ fn first_value(
 }
 
 ///|
-/// 决定 JSON 从哪来：`--file` 或命令行上的 JSON，两者只能给一个。
+/// 读标准输入的全部内容，直到管道关闭。
 ///
-/// 都没给时返回 `None`，由调用方决定去展示示例。
-fn read_input(file : String, inline : String) -> Result[String?, String] {
-  if file != "" && inline != "" {
-    return Err("--file 和命令行上的 JSON 只能给一个")
+/// 只在 `--stdin` 时才会调用：没法判断 stdin 是管道还是终端，裸读会把人卡在那儿等输入。
+async fn read_stdin() -> String {
+  @stdio.stdin.read_all().text()
+}
+
+///|
+/// 决定 JSON 从哪来：`--file`、`--stdin` 或命令行上的 JSON，三者只能给一个。
+///
+/// 都没给时返回 `None`，由调用方决定去展示示例。`piped` 是已经读好的标准输入内容，
+/// 传 `None` 表示没开 `--stdin`——读取本身是异步的，放在 `main` 里做，这里只管挑。
+fn read_input(
+  file : String,
+  inline : String,
+  piped : String?,
+) -> Result[String?, String] {
+  let mut given = 0
+  if file != "" {
+    given = given + 1
+  }
+  if inline != "" {
+    given = given + 1
+  }
+  if piped is Some(_) {
+    given = given + 1
+  }
+  if given > 1 {
+    return Err("--file、--stdin 和命令行上的 JSON 只能给一个")
   }
   if file != "" {
     let text = @fs.read_file_to_string(file) catch {
@@ -132,7 +161,10 @@ fn read_input(file : String, inline : String) -> Result[String?, String] {
   if inline != "" {
     return Ok(Some(inline))
   }
-  Ok(None)
+  match piped {
+    Some(text) => Ok(Some(strip_bom(text)))
+    None => Ok(None)
+  }
 }
 
 ///|
@@ -151,7 +183,10 @@ fn show_demo() -> Unit {
 
 ///|
 /// 解析参数、取输入、转换并打印。错误以 `Err` 返回，由 `main` 统一打印并定退出码。
-fn run() -> Result[Unit, String] raise {
+///
+/// 参数解析和输出都是同步的，只有 `--stdin` 需要在 `main` 里 await 完再传进来，
+/// 所以这个函数本身不是 async。
+fn run(piped : String?) -> Result[Unit, String] raise {
   let cmd = command()
   let matches = cmd.parse()
   if matches.flags.get("help") == Some(true) {
@@ -171,6 +206,7 @@ fn run() -> Result[Unit, String] raise {
     read_input(
       first_value(matches, "file", ""),
       first_value(matches, "json", ""),
+      piped,
     ) {
     Ok(input) => input
     Err(msg) => return Err(msg)
@@ -194,8 +230,27 @@ fn run() -> Result[Unit, String] raise {
 ///|
 /// 命令行入口。转换失败、参数非法、文件读不到都以退出码 1 结束，
 /// 好让脚本能靠退出码判断成功与否。
-fn main {
-  let result = run() catch { err => Err(err.to_string()) }
+///
+/// 写成 `async fn main` 是为了能读标准输入：`moonbitlang/async` 的接口都是异步的。
+/// 只有开了 `--stdin` 才去 await，其余路径跟同步写法一样。
+async fn main {
+  let result = try {
+    let cmd = command()
+    let matches = cmd.parse()
+    // 帮助要先于读 stdin 处理，否则 `--help` 会先卡在等输入上
+    if matches.flags.get("help") == Some(true) {
+      println(help_text(cmd))
+      return
+    }
+    let piped = if matches.flags.get("stdin") == Some(true) {
+      Some(read_stdin())
+    } else {
+      None
+    }
+    run(piped)
+  } catch {
+    err => Err(err.to_string())
+  }
   match result {
     Ok(_) => ()
     Err(msg) => {

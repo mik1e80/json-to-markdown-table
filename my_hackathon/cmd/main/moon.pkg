@@ -1,8 +1,14 @@
 import {
   "moonbitlang/core/argparse",
+  "moonbitlang/async",
+  "moonbitlang/async/stdio",
   "moonbitlang/x/fs",
   "moonbitlang/x/sys",
   "username/my_hackathon",
 }
+
+// 读标准输入要走 moonbitlang/async，它只在 wasm / native 上有实现
+
+supported_targets = "-all+wasm+native"
 
 pkgtype(kind: "executable")

@@ -27,4 +27,5 @@ description = "把 JSON 对象数组转换成 Markdown 表格"
 
 import {
   "moonbitlang/x@0.5.5",
+  "moonbitlang/async@0.21.0",
 }

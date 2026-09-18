@@ -90,3 +90,59 @@ test "collect_keys 处理中文键时结果稳定" {
   @test.assert_eq(a, b)
   @test.assert_eq(a.length(), 2)
 }
+
+///|
+/// 测试辅助：解析出单个 JSON 值。
+fn json_of(input : String) -> Json raise {
+  match parse_json(input) {
+    Ok(json) => json
+    Err(msg) => @test.fail("测试数据解析失败：\{msg}")
+  }
+}
+
+///|
+test "json_to_cell 把 null 渲染成空串" {
+  @test.assert_eq(json_to_cell(json_of("null")), "")
+}
+
+///|
+test "json_to_cell 渲染布尔值" {
+  @test.assert_eq(json_to_cell(json_of("true")), "true")
+  @test.assert_eq(json_to_cell(json_of("false")), "false")
+}
+
+///|
+test "json_to_cell 渲染整数" {
+  @test.assert_eq(json_to_cell(json_of("20")), "20")
+}
+
+///|
+test "json_to_cell 普通数字按 Double 文本输出" {
+  @test.assert_eq(json_to_cell(json_of("1.50")), "1.5")
+}
+
+///|
+test "json_to_cell 超出双精度时保留数字的原始写法" {
+  @test.assert_eq(
+    json_to_cell(json_of("12345678901234567890")),
+    "12345678901234567890",
+  )
+}
+
+///|
+test "json_to_cell 字符串原样返回" {
+  @test.assert_eq(json_to_cell(json_of("\"张三\"")), "张三")
+}
+
+///|
+test "json_to_cell 把嵌套对象压成一行 JSON" {
+  @test.assert_eq(
+    json_to_cell(json_of("{\"city\":\"北京\"}")),
+    "{\"city\":\"北京\"}",
+  )
+}
+
+///|
+test "json_to_cell 把数组压成一行 JSON" {
+  @test.assert_eq(json_to_cell(json_of("[1,2,3]")), "[1,2,3]")
+}

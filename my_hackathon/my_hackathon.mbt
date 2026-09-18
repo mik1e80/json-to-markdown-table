@@ -57,3 +57,28 @@ fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
   keys.sort()
   keys
 }
+
+///|
+/// 把一个 JSON 值渲染成单元格里的文本（不含 Markdown 转义，转义交给 render_row）。
+///
+/// - `null` → 空串，表格里看起来就是「没填」
+/// - 布尔 → `true` / `false`
+/// - 数字 → 优先用 `repr`。官方解析器只在 Double 无法精确表示该字面量时才填它
+///   （例如超出双精度整数范围的 `12345678901234567890`），此时保留原文可避免精度丢失；
+///   其余情况用 Double 的文本表示，`1.50` 会被规范化成 `1.5`（值本身没有变化）
+/// - 字符串 → 原样
+/// - 数组 / 对象 → 压成一行 JSON
+fn json_to_cell(json : Json) -> String {
+  match json {
+    Null => ""
+    True => "true"
+    False => "false"
+    Number(d, repr~) =>
+      match repr {
+        Some(r) => r
+        None => d.to_string()
+      }
+    String(s) => s
+    Array(_) | Object(_) => json.stringify()
+  }
+}

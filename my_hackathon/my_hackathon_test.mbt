@@ -263,6 +263,26 @@ test "json_to_markdown_table_with 可以按字典序排列表头" {
 }
 
 ///|
+test "端到端居中与右对齐" {
+  let centered : @my_hackathon.Options = {
+    ..@my_hackathon.Options::default(),
+    alignment: @my_hackathon.Alignment::Center,
+  }
+  assert_eq(
+    table_of_with("[{\"name\":\"张三\"}]", centered),
+    "| name |\n| :---: |\n| 张三 |\n",
+  )
+  let right : @my_hackathon.Options = {
+    ..@my_hackathon.Options::default(),
+    alignment: @my_hackathon.Alignment::Right,
+  }
+  assert_eq(
+    table_of_with("[{\"name\":\"张三\"}]", right),
+    "| name |\n| ---: |\n| 张三 |\n",
+  )
+}
+
+///|
 test "嵌套过深会给出提示" {
   let mut input = ""
   let mut i = 0

@@ -48,6 +48,39 @@ test "render_row 单列" {
 }
 
 ///|
+/// 测试辅助：渲染一张两列的表，用来检查分隔行。
+fn one_row_table(alignment : Alignment) -> String {
+  let headers : Array[String] = ["a", "b"]
+  let rows : Array[Map[String, Json]] = [
+    Map([("a", Json::null()), ("b", Json::null())]),
+  ]
+  render_table(headers, rows, alignment)
+}
+
+///|
+test "render_table 左对齐的分隔行是 ---" {
+  assert_true(one_row_table(Left).contains("| --- | --- |"))
+}
+
+///|
+test "render_table 居中对齐的分隔行是 :---:" {
+  assert_true(one_row_table(Center).contains("| :---: | :---: |"))
+}
+
+///|
+test "render_table 右对齐的分隔行是 ---:" {
+  assert_true(one_row_table(Right).contains("| ---: | ---: |"))
+}
+
+///|
+test "Options::default 的三项默认值" {
+  let options = Options::default()
+  assert_true(options.flatten_objects)
+  assert_true(options.alignment == Left)
+  assert_false(options.sort_columns)
+}
+
+///|
 /// 测试辅助：把 JSON 文本解析成「对象数组」，模拟 collect_keys 的真实输入。
 fn rows_of(input : String) -> Array[Map[String, Json]] raise {
   match parse_json(input) {

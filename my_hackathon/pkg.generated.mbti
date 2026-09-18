@@ -11,8 +11,15 @@ pub fn parse_json(String) -> Result[Json, String]
 // Errors
 
 // Types and methods
+pub(all) enum Alignment {
+  Left
+  Center
+  Right
+} derive(Eq)
+
 pub(all) struct Options {
   flatten_objects : Bool
+  alignment : Alignment
   sort_columns : Bool
 } derive(Eq)
 pub fn Options::default() -> Self

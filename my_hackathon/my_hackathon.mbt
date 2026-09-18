@@ -213,10 +213,21 @@ fn json_to_cell(json : Json) -> String {
 }
 
 ///|
+/// 表格的对齐方式，作用于整张表。
+///
+/// Markdown 用分隔行里的冒号表示对齐：`---` 左对齐、`:---:` 居中、`---:` 右对齐。
+pub(all) enum Alignment {
+  Left
+  Center
+  Right
+} derive(Eq)
+
+///|
 /// 转换选项。
 ///
 /// - `flatten_objects`：是否把嵌套对象展平成 `父.子` 形式的列。默认 `true`；
 ///   设为 `false` 时嵌套对象照旧压成一行 JSON 放进一个单元格
+/// - `alignment`：整张表的对齐方式，默认 `Left`
 /// - `sort_columns`：表头是否按字典序排序。默认 `false`，即保留键在 JSON
 ///   里出现的顺序，跟原始数据的书写顺序一致
 ///
@@ -224,13 +235,14 @@ fn json_to_cell(json : Json) -> String {
 /// `{ ..Options::default(), flatten_objects: false }`。
 pub(all) struct Options {
   flatten_objects : Bool
+  alignment : Alignment
   sort_columns : Bool
 } derive(Eq)
 
 ///|
-/// 默认选项：展平嵌套对象、表头按出现顺序。
+/// 默认选项：展平嵌套对象、左对齐、表头按出现顺序。
 pub fn Options::default() -> Options {
-  { flatten_objects: true, sort_columns: false, }
+  { flatten_objects: true, alignment: Left, sort_columns: false, }
 }
 
 ///|
@@ -283,18 +295,26 @@ pub fn json_to_markdown_table_with(
     // 空数组，或数组里全是空对象：没有列可展示
     return Ok("")
   }
-  Ok(render_table(headers, rows))
+  Ok(render_table(headers, rows, options.alignment))
 }
 
 ///|
 /// 渲染整张表：表头行 + 分隔行 + 数据行，以换行结尾。
+///
+/// `alignment` 通过分隔行里的冒号表达，Markdown 会据此对齐整列。
 fn render_table(
   headers : Array[String],
   rows : Array[Map[String, Json]],
+  alignment : Alignment,
 ) -> String {
+  let separator = match alignment {
+    Left => "---"
+    Center => ":---:"
+    Right => "---:"
+  }
   let lines : Array[String] = [
     render_row(headers),
-    render_row(headers.map(fn(_) { "---" })),
+    render_row(headers.map(fn(_) { separator })),
   ]
   for row in rows {
     let cells : Array[String] = []

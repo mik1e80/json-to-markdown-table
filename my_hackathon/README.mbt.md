@@ -73,8 +73,14 @@ moon run cmd/main -- --help
 
 ## 网页版
 
+在线试用：<https://mik1e80.github.io/json-to-markdown-table/>
+
+![网页界面](web/screenshot.png)
+
 `web/index.html` 是一个交互界面：左边贴 JSON，右边实时出表格，写错了直接在
 下面显示中文错误（带行列位置）。页面上方有五个一键示例。
+
+![错误提示](web/screenshot-error.png)
 
 **用浏览器打开 `web/index.html` 就能用**——不用装 npm、不用起服务器、不用构建。
 转换逻辑不是用 JavaScript 重写的，而是 `web/dist/web.js`：真正的 MoonBit 代码

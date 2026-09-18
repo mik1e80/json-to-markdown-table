@@ -4,7 +4,16 @@ MoonBit 实现 JSON 数组转换为 Markdown 表格的纯前端网页工具。
 
 **在线试用：<https://mik1e80.github.io/json-to-markdown-table/>**
 
+![网页界面](my_hackathon/web/screenshot.png)
+
 ---
+
+## 这是个什么项目
+
+黑客松作品。核心是一份用 MoonBit 写的 JSON → Markdown 表格转换逻辑，加上
+命令行工具、网页界面和 99 个测试。JSON 解析用的是官方库 `moonbitlang/core/json`，
+没有手写解析器；网页上跑的也不是 JavaScript 重写的版本，而是同一份 MoonBit
+代码编译成 JS（`moon build --target js`）的产物。
 
 ## 这是什么
 

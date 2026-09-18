@@ -24,3 +24,7 @@ keywords = [ "json", "markdown", "table" ]
 preferred_target = "wasm"
 
 description = "把 JSON 对象数组转换成 Markdown 表格"
+
+import {
+  "moonbitlang/x@0.5.5",
+}

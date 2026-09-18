@@ -1,5 +1,7 @@
 import {
-  "moonbitlang/core/env",
+  "moonbitlang/core/argparse",
+  "moonbitlang/x/fs",
+  "moonbitlang/x/sys",
   "username/my_hackathon",
 }
 

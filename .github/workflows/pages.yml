@@ -1,0 +1,51 @@
+name: 部署网页版到 GitHub Pages
+
+# 把 my_hackathon/web/ 发布成一个网址，方便直接把链接发给别人。
+#
+# 这里不装 moon 工具链：dist/web.js 是提交进仓库的编译产物，CI 只需要把
+# 页面要用的几个文件挑出来。所以改完 MoonBit 代码记得先在本地跑
+# `bash web/build.sh`，产物提交上来之后这个工作流才会带上新逻辑。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "my_hackathon/web/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 连着推几次时只保留最后一次，别让旧的构建把新的覆盖掉
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 准备站点文件
+        run: |
+          mkdir -p _site/dist
+          cp my_hackathon/web/index.html _site/
+          cp my_hackathon/web/style.css   _site/
+          cp my_hackathon/web/app.js      _site/
+          cp my_hackathon/web/dist/web.js _site/dist/
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v5

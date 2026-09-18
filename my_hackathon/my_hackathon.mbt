@@ -114,6 +114,80 @@ fn collect_keys(
 }
 
 ///|
+/// 统计每个「点号路径」被占用的最小树深度。
+///
+/// 同一个路径可能被多处占用：`{"a": {"b": 1}, "a.b": 2}` 里的 `a.b` 既被顶层
+/// 直接键占用（深度 0），也被 `a` 下的展平键占用（深度 1）。这里记下最小深度，
+/// 展平时只让最浅的那处写入，于是「直接键赢过展平键」与键的书写顺序无关。
+fn record_depths(
+  obj : Map[String, Json],
+  prefix : String,
+  depth : Int,
+  depths : Map[String, Int],
+) -> Unit {
+  for k, v in obj {
+    let key = if prefix == "" { k } else { prefix + "." + k }
+    let shallower = match depths.get(key) {
+      Some(known) => depth < known
+      None => true
+    }
+    if shallower {
+      depths.set(key, depth)
+    }
+    match v {
+      Object(inner) =>
+        if !inner.is_empty() {
+          record_depths(inner, key, depth + 1, depths)
+        }
+      _ => ()
+    }
+  }
+}
+
+///|
+/// 按出现顺序输出展平后的键值。
+///
+/// 只有最浅的那处占用才写入（深度由 `record_depths` 算出），同名更深处的
+/// 展平键直接跳过。空的嵌套对象没有可展开的字段，保留键本身、值当作 `null`
+/// （于是单元格显示为空），免得整列凭空消失。
+fn emit_flattened(
+  obj : Map[String, Json],
+  prefix : String,
+  depth : Int,
+  depths : Map[String, Int],
+  out : Map[String, Json],
+) -> Unit {
+  for k, v in obj {
+    let key = if prefix == "" { k } else { prefix + "." + k }
+    let is_shallowest = depths.get(key) == Some(depth)
+    match v {
+      Object(inner) =>
+        if inner.is_empty() {
+          if is_shallowest {
+            // Json 的构造器跨包不可见，用官方提供的 Json::null()
+            out.set(key, Json::null())
+          }
+        } else {
+          emit_flattened(inner, key, depth + 1, depths, out)
+        }
+      _ => if is_shallowest { out.set(key, v) }
+    }
+  }
+}
+
+///|
+/// 把一行里的嵌套对象递归展平成 `a.b.c` 形式的键，列的顺序不变。
+///
+/// 只展平对象；数组不展平，照旧压成一行 JSON 放在一个单元格里。
+fn flatten_row(row : Map[String, Json]) -> Map[String, Json] {
+  let depths : Map[String, Int] = Map([])
+  record_depths(row, "", 0, depths)
+  let out : Map[String, Json] = Map([])
+  emit_flattened(row, "", 0, depths, out)
+  out
+}
+
+///|
 /// 把一个 JSON 值渲染成单元格里的文本（不含 Markdown 转义，转义交给 render_row）。
 ///
 /// - `null` → 空串，表格里看起来就是「没填」
@@ -141,16 +215,22 @@ fn json_to_cell(json : Json) -> String {
 ///|
 /// 转换选项。
 ///
+/// - `flatten_objects`：是否把嵌套对象展平成 `父.子` 形式的列。默认 `true`；
+///   设为 `false` 时嵌套对象照旧压成一行 JSON 放进一个单元格
 /// - `sort_columns`：表头是否按字典序排序。默认 `false`，即保留键在 JSON
 ///   里出现的顺序，跟原始数据的书写顺序一致
+///
+/// 想只改其中一项时用结构体更新语法，例如
+/// `{ ..Options::default(), flatten_objects: false }`。
 pub(all) struct Options {
+  flatten_objects : Bool
   sort_columns : Bool
 } derive(Eq)
 
 ///|
-/// 默认选项：表头按出现顺序。
+/// 默认选项：展平嵌套对象、表头按出现顺序。
 pub fn Options::default() -> Options {
-  { sort_columns: false, }
+  { flatten_objects: true, sort_columns: false, }
 }
 
 ///|
@@ -196,6 +276,8 @@ pub fn json_to_markdown_table_with(
         "输入需要是对象数组或单个对象，当前是\{type_name(json)}",
       )
   }
+  // 展平只作用于每一行的值，不影响上面「对象数组 / 单个对象」的判定
+  let rows = if options.flatten_objects { rows.map(flatten_row) } else { rows }
   let headers = collect_keys(rows, sort=options.sort_columns)
   if headers.length() == 0 {
     // 空数组，或数组里全是空对象：没有列可展示

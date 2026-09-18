@@ -173,3 +173,52 @@ test "json_to_cell 把嵌套对象压成一行 JSON" {
 test "json_to_cell 把数组压成一行 JSON" {
   assert_eq(json_to_cell(json_of("[1,2,3]")), "[1,2,3]")
 }
+
+///|
+/// 测试辅助：把一行的第一个对象展平，拼成「键=值」的文本方便断言。
+fn flattened_of(input : String) -> String raise {
+  let row = flatten_row(rows_of(input)[0])
+  let parts : Array[String] = []
+  for k, v in row {
+    parts.push(k + "=" + json_to_cell(v))
+  }
+  parts.join(", ")
+}
+
+///|
+test "flatten_row 展平单层嵌套" {
+  assert_eq(
+    flattened_of("[{\"name\":\"张三\",\"addr\":{\"city\":\"北京\"}}]"),
+    "name=张三, addr.city=北京",
+  )
+}
+
+///|
+test "flatten_row 展平多层嵌套" {
+  assert_eq(flattened_of("[{\"a\":{\"b\":{\"c\":1}}}]"), "a.b.c=1")
+}
+
+///|
+test "flatten_row 没有嵌套时原样返回" {
+  assert_eq(flattened_of("[{\"a\":1,\"b\":\"x\"}]"), "a=1, b=x")
+}
+
+///|
+test "flatten_row 保留空的嵌套对象的键" {
+  assert_eq(flattened_of("[{\"addr\":{}}]"), "addr=")
+}
+
+///|
+test "flatten_row 数组不展平" {
+  assert_eq(flattened_of("[{\"tags\":[1,2]}]"), "tags=[1,2]")
+}
+
+///|
+test "flatten_row 直接键赢过展平键" {
+  assert_eq(flattened_of("[{\"a\":{\"b\":1},\"a.b\":2}]"), "a.b=2")
+}
+
+///|
+test "flatten_row 嵌套层内的直接键也赢" {
+  assert_eq(flattened_of("[{\"a\":{\"b\":{\"c\":1},\"b.c\":2}}]"), "a.b.c=2")
+}

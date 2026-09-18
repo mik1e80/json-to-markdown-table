@@ -7,6 +7,8 @@ JSON 解析使用官方库 `moonbitlang/core/json`，没有手写解析器。
 
 - **不丢列**：表头取所有对象键的并集，某一行缺少的键留空单元格，
   不会因为第一行字段少就把后面的列丢掉
+- **嵌套自动展开**：`{"addr":{"city":"北京"}}` 变成 `addr.city` 一列，
+  而不是把一大坨 JSON 塞进单元格
 - **保持原顺序**：表头按键在 JSON 里出现的先后排列，跟原始数据一致；
   需要跨数据源稳定输出时，可以用 `sort_columns` 选项改回字典序
 - **自动转义**：反斜杠转义成 `\\`、竖线转义成 `\|`、换行转成 `<br>`，
@@ -49,7 +51,7 @@ moon run cmd/main
 ```mbt check
 ///|
 test {
-  let options : Options = { sort_columns: true, }
+  let options : Options = { ..Options::default(), sort_columns: true, }
   match
     json_to_markdown_table_with("[{\"name\":\"张三\",\"age\":20}]", options) {
     Ok(md) =>
@@ -90,7 +92,22 @@ test {
 | `true` / `false` | `true` / `false` |
 | 数字 | 优先用原始写法（超出双精度时），否则用 Double 的文本，`1.50` 会规范化成 `1.5` |
 | 字符串 | 原样输出，竖线和换行会被转义 |
-| 数组 / 对象 | 压成一行 JSON |
+| 数组 | 压成一行 JSON |
+| 对象 | 默认展平成 `父.子` 形式的列（见下），可用 `flatten_objects: false` 关掉 |
+
+### 嵌套对象怎么展平
+
+`{"name":"张三","addr":{"city":"北京","zip":"100000"}}` 会展开成三列：
+
+| name | addr.city | addr.zip |
+| --- | --- | --- |
+| 张三 | 北京 | 100000 |
+
+- 递归展开，`{"a":{"b":{"c":1}}}` 得到 `a.b.c` 一列
+- 数组不展平，照旧压成一行 JSON
+- 空的嵌套对象保留列名，单元格留空
+- 万一展平出来的列名和本来就有的键撞了（比如同时存在 `{"a":{"b":1}}` 和 `"a.b":2`），
+  **直接写出来的键赢**，且与键的书写顺序无关
 
 ## 开发
 

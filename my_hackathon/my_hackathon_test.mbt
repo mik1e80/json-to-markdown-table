@@ -122,10 +122,76 @@ test "json_to_markdown_table 中文键与中文值" {
 }
 
 ///|
-test "json_to_markdown_table 嵌套对象压成一行 JSON" {
+/// 测试辅助：用指定选项转换，失败直接让测试失败。
+fn table_of_with(
+  input : String,
+  options : @my_hackathon.Options,
+) -> String raise {
+  match @my_hackathon.json_to_markdown_table_with(input, options) {
+    Ok(md) => md
+    Err(msg) => fail("转换不该失败：\{msg}")
+  }
+}
+
+///|
+test "json_to_markdown_table 嵌套对象默认展平成点号列" {
   assert_eq(
     table_of("[{\"name\":\"张三\",\"addr\":{\"city\":\"北京\"}}]"),
+    "| name | addr.city |\n| --- | --- |\n| 张三 | 北京 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 关闭展平后压成一行 JSON" {
+  let no_flatten : @my_hackathon.Options = {
+    ..@my_hackathon.Options::default(),
+    flatten_objects: false,
+  }
+  assert_eq(
+    table_of_with(
+      "[{\"name\":\"张三\",\"addr\":{\"city\":\"北京\"}}]", no_flatten,
+    ),
     "| name | addr |\n| --- | --- |\n| 张三 | {\"city\":\"北京\"} |\n",
+  )
+}
+
+///|
+test "展平支持多层嵌套" {
+  assert_eq(
+    table_of("[{\"a\":{\"b\":{\"c\":1}}}]"),
+    "| a.b.c |\n| --- |\n| 1 |\n",
+  )
+}
+
+///|
+test "空的嵌套对象保留列但单元格为空" {
+  assert_eq(table_of("[{\"addr\":{}}]"), "| addr |\n| --- |\n|  |\n")
+}
+
+///|
+test "展平键与直接键冲突时直接键赢" {
+  // 顶层直接写出的 a.b 优先于从 a 里展平出来的 a.b
+  assert_eq(
+    table_of("[{\"a\":{\"b\":1},\"a.b\":2}]"),
+    "| a.b |\n| --- |\n| 2 |\n",
+  )
+  // 换个书写顺序，结果必须一样
+  assert_eq(
+    table_of("[{\"a.b\":2,\"a\":{\"b\":1}}]"),
+    "| a.b |\n| --- |\n| 2 |\n",
+  )
+}
+
+///|
+test "数组不展平" {
+  assert_eq(table_of("[{\"tags\":[1,2]}]"), "| tags |\n| --- |\n| [1,2] |\n")
+}
+
+///|
+test "展平后的列同样参与表头并集与缺省留空" {
+  assert_eq(
+    table_of("[{\"a\":{\"x\":1}},{\"a\":{\"y\":2}}]"),
+    "| a.x | a.y |\n| --- | --- |\n| 1 |  |\n|  | 2 |\n",
   )
 }
 
@@ -180,7 +246,10 @@ test "json_to_markdown_table 单个空对象返回空串" {
 
 ///|
 test "json_to_markdown_table_with 可以按字典序排列表头" {
-  let options : @my_hackathon.Options = { sort_columns: true, }
+  let options : @my_hackathon.Options = {
+    ..@my_hackathon.Options::default(),
+    sort_columns: true,
+  }
   match
     @my_hackathon.json_to_markdown_table_with(
       "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"}]", options,

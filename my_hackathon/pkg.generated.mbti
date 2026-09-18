@@ -12,6 +12,7 @@ pub fn parse_json(String) -> Result[Json, String]
 
 // Types and methods
 pub(all) struct Options {
+  flatten_objects : Bool
   sort_columns : Bool
 } derive(Eq)
 pub fn Options::default() -> Self

@@ -76,11 +76,22 @@ moon run cmd/main -- --help
 `web/index.html` 是一个交互界面：左边贴 JSON，右边实时出表格，写错了直接在
 下面显示中文错误（带行列位置）。页面上方有五个一键示例。
 
-**直接双击 `web/index.html` 就能用**——不用装 npm、不用起服务器、不用构建。
+**用浏览器打开 `web/index.html` 就能用**——不用装 npm、不用起服务器、不用构建。
 转换逻辑不是用 JavaScript 重写的，而是 `web/dist/web.js`：真正的 MoonBit 代码
 经 `moon build --target js` 编译出来的，页面调的就是它导出的 `convert()`。
 
-这几件事让「双击就能用」成立：
+打开方式（随便挑一个）：
+
+| 方式 | 操作 |
+| --- | --- |
+| 文件管理器 | 在 `web/` 目录里双击 `index.html` |
+| 命令行 | `start "" "路径\web\index.html"` |
+| 拖拽 | 把 `index.html` 拖进已经开着的浏览器窗口 |
+
+> **注意**：在 VS Code 的文件列表里双击，只会用编辑器打开源码，不会启动浏览器。
+> 那种情况在文件上右键选「Reveal in File Explorer」，再在弹出来的窗口里双击。
+
+这几件事让「打开就能用」成立：
 
 | 做法 | 原因 |
 | --- | --- |

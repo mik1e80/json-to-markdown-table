@@ -19,12 +19,8 @@ repository = ""
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "json", "markdown", "table" ]
 
 preferred_target = "wasm"
 
-description = ""
-
-import {
-  "moonbit-community/rabbita@0.15.7",
-}
+description = "把 JSON 对象数组转换成 Markdown 表格"

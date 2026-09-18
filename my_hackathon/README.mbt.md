@@ -105,6 +105,20 @@ moon run cmd/main -- --help
 bash web/build.sh
 ```
 
+### 分享给别人
+
+想把页面发给别人（微信、邮件都行），打包成**单个 HTML 文件**：
+
+```bash
+bash web/pack.sh
+# 生成 web/dist/json-to-markdown-table.html，约 270 KB
+```
+
+这个文件把样式、页面逻辑、MoonBit 编译产物全部内联在一起，对方收到直接
+双击就能用——不用联网、不用装环境、不用起服务器，也不依赖同目录下的其它文件。
+
+单文件版本是生成物，没进版本库。改了源码就重新跑一次 `pack.sh` 再发。
+
 ## 库用法
 
 对外只有三个函数和一个选项结构：
@@ -238,3 +252,4 @@ web 导出层白盒测试 11 + README 里这两段可执行示例。
 - `web/index.html`、`web/style.css`、`web/app.js` — 网页界面
 - `web/web.mbt` — 导出给 JavaScript 的那层，`web/dist/web.js` 是它的编译产物
 - `web/build.sh` — 重新生成 `web/dist/web.js`
+- `web/pack.sh` — 打包成单个 HTML 文件，用来发给别人

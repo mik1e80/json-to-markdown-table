@@ -3,6 +3,10 @@ _build/
 .mooncakes/
 _coverage/
 
+# 打包好的单文件网页：生成物，用来发给别人，不进版本库
+# （web/dist/web.js 是有意提交的，见 README 的「网页版」一节）
+my_hackathon/web/dist/*.html
+
 # 测试覆盖率文件
 moonbit-coverage-*.txt
 

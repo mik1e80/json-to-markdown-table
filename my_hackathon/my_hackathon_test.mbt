@@ -23,3 +23,68 @@ test "parse_json 对非法 JSON 返回错误" {
     Err(msg) => assert_true(msg.length() > 0)
   }
 }
+
+///|
+/// 测试辅助：转换成功时返回表格，失败直接让测试失败。
+fn table_of(input : String) -> String raise {
+  match @my_hackathon.json_to_markdown_table(input) {
+    Ok(md) => md
+    Err(msg) => @test.fail("转换不该失败：\{msg}")
+  }
+}
+
+///|
+test "json_to_markdown_table 转换对象数组" {
+  let input = "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"},{\"name\":\"李四\",\"age\":22,\"city\":\"上海\"}]"
+  @test.assert_eq(
+    table_of(input),
+    "| age | city | name |\n| --- | --- | --- |\n| 20 | 北京 | 张三 |\n| 22 | 上海 | 李四 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 三行数据" {
+  let input = "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"},{\"name\":\"李四\",\"age\":22,\"city\":\"上海\"},{\"name\":\"王五\",\"age\":21,\"city\":\"广州\"}]"
+  @test.assert_eq(
+    table_of(input),
+    "| age | city | name |\n| --- | --- | --- |\n| 20 | 北京 | 张三 |\n| 22 | 上海 | 李四 |\n| 21 | 广州 | 王五 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 缺失的键留空" {
+  let input = "[{\"name\":\"张三\",\"age\":20},{\"name\":\"李四\"}]"
+  @test.assert_eq(
+    table_of(input),
+    "| age | name |\n| --- | --- |\n| 20 | 张三 |\n|  | 李四 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 端到端转义竖线与换行" {
+  @test.assert_eq(
+    table_of("[{\"note\":\"a|b\"},{\"note\":\"第一行\\n第二行\"}]"),
+    "| note |\n| --- |\n| a\\|b |\n| 第一行<br>第二行 |\n",
+  )
+}
+
+///|
+test "json_to_markdown_table 空数组得到空表格" {
+  @test.assert_eq(table_of("[]"), "")
+}
+
+///|
+test "json_to_markdown_table 数组含非对象时返回错误" {
+  match @my_hackathon.json_to_markdown_table("[{\"a\":1},2]") {
+    Ok(md) => @test.fail("数组里混入非对象不该成功：\{md}")
+    Err(msg) => assert_true(msg.length() > 0)
+  }
+}
+
+///|
+test "json_to_markdown_table 顶层不是数组时返回错误" {
+  match @my_hackathon.json_to_markdown_table("{\"name\":\"张三\"}") {
+    Ok(md) => @test.fail("单对象目前不支持，不该成功：\{md}")
+    Err(msg) => assert_true(msg.length() > 0)
+  }
+}

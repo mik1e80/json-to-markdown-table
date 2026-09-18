@@ -82,3 +82,60 @@ fn json_to_cell(json : Json) -> String {
     Array(_) | Object(_) => json.stringify()
   }
 }
+
+///|
+/// 把 JSON 文本转换成 Markdown 表格。
+///
+/// 输入应当是「对象数组」：表头取所有对象键的并集并按字典序排序，
+/// 某一行缺少某个键时对应单元格留空。返回值结尾带一个换行。
+pub fn json_to_markdown_table(input : String) -> Result[String, String] {
+  let json = match parse_json(input) {
+    Ok(json) => json
+    Err(msg) => return Err(msg)
+  }
+  let rows = match json {
+    Array(items) => {
+      let rows : Array[Map[String, Json]] = []
+      for item in items {
+        match item {
+          Object(obj) => rows.push(obj)
+          _ =>
+            return Err("数组里出现了非对象元素，无法转成表格")
+        }
+      }
+      rows
+    }
+    _ => return Err("输入需要是对象数组")
+  }
+  let headers = collect_keys(rows)
+  if headers.length() == 0 {
+    // 空数组，或数组里全是空对象：没有列可展示
+    return Ok("")
+  }
+  Ok(render_table(headers, rows))
+}
+
+///|
+/// 渲染整张表：表头行 + 分隔行 + 数据行，以换行结尾。
+fn render_table(
+  headers : Array[String],
+  rows : Array[Map[String, Json]],
+) -> String {
+  let lines : Array[String] = [
+    render_row(headers),
+    render_row(headers.map(fn(_) { "---" })),
+  ]
+  for row in rows {
+    let cells : Array[String] = []
+    for h in headers {
+      cells.push(
+        match row.get(h) {
+          Some(value) => json_to_cell(value)
+          None => ""
+        },
+      )
+    }
+    lines.push(render_row(cells))
+  }
+  lines.join("\n") + "\n"
+}

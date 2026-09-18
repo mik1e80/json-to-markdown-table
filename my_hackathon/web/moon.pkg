@@ -1,0 +1,15 @@
+import {
+  "username/my_hackathon",
+}
+
+// 编译成浏览器能直接 <script src> 加载的 JS。
+//
+// - exports：列出要暴露成全局变量的函数，必须是 pub
+// - format: "iife"：包成一个立即执行函数，函数名挂到全局。
+//   默认的 "esm" 在 file:// 下会被 CORS 拦掉，页面就不能双击打开了
+
+options(
+  link: {
+    "js": { "exports": [ "convert", "convert_error" ], "format": "iife" },
+  },
+)

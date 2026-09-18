@@ -37,3 +37,23 @@ fn escape_cell(s : String) -> String {
 fn render_row(cells : Array[String]) -> String {
   "| " + cells.map(escape_cell).join(" | ") + " |"
 }
+
+///|
+/// 收集所有行出现过的键，去重后按字典序排序。
+///
+/// 表头取「并集」而不是只看第一行，这样后面才出现的键不会丢；
+/// 排序则保证同样的数据每次得到完全一样的表格。
+fn collect_keys(rows : Array[Map[String, Json]]) -> Array[String] {
+  let seen : Map[String, Unit] = Map([])
+  let keys : Array[String] = []
+  for row in rows {
+    for k, _ in row {
+      if !seen.contains(k) {
+        seen.set(k, ())
+        keys.push(k)
+      }
+    }
+  }
+  keys.sort()
+  keys
+}

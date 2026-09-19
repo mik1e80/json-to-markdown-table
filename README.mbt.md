@@ -1,7 +1,47 @@
 # JSON → Markdown 表格
 
-把 JSON 对象数组转换成 Markdown 表格的 MoonBit 库，附带一个命令行工具。
-JSON 解析用的是官方库 `moonbitlang/core/json`，没有手写解析器。
+用 MoonBit 写的 JSON → Markdown 表格转换工具。
+
+**在线试用：<https://mik1e80.github.io/json-to-markdown-table/>**
+
+## 这是什么
+
+写文档、提 issue、整理接口返回的时候，经常要把一段 JSON 数据贴成表格。
+手工敲 Markdown 表格又慢又容易错：竖线忘了转义、字段对不齐、某一行少个键
+整列就串位了。这个工具就是干这件事的。
+
+同一份转换逻辑提供三种用法，按场景挑：
+
+| 形态 | 适合 | 入口 |
+| --- | --- | --- |
+| **库** | 在自己的 MoonBit 项目里调用 | `json_to_markdown_table(input)` |
+| **命令行** | 处理文件、接管道、写进脚本 | `moon run cmd/main --file data.json` |
+| **网页** | 随手贴一段看看效果 | 上面的在线链接，或浏览器打开 `web/index.html` |
+
+三种形态跑的是同一份代码——网页上的转换**不是**用 JavaScript 重写的版本，
+而是 MoonBit 经 `moon build --target js` 编译出来的 JS。JSON 解析用的是官方库
+`moonbitlang/core/json`，没有手写解析器。
+
+### 三十秒上手
+
+```bash
+# 命令行：直接给 JSON
+moon run cmd/main '[{"name":"张三","age":20},{"name":"李四","age":22}]'
+
+# 命令行：从文件读（自动剥 UTF-8 BOM）
+moon run cmd/main --file data.json
+
+# 命令行：接管道
+curl -s https://example.com/api/users | moon run cmd/main --stdin
+```
+
+```moonbit nocheck
+// 当库用
+match @json2md.json_to_markdown_table(input) {
+  Ok(markdown) => println(markdown)
+  Err(msg) => println("转换失败：\{msg}")
+}
+```
 
 ## 特性
 
@@ -17,8 +57,9 @@ JSON 解析用的是官方库 `moonbitlang/core/json`，没有手写解析器。
 - **中文错误**：解析失败时说明原因，并给出出错的行列位置
 - **三种输入**：命令行参数、文件（自动剥 UTF-8 BOM）、标准输入管道
 - **退出码**：出错时退出码为 1，脚本能直接判断成功与否
-- **网页版**：双击 `web/index.html` 就有一个实时转换的界面。页面上的转换逻辑
-  不是用 JavaScript 重写的，而是同一份 MoonBit 代码编译成 JS 跑在浏览器里
+- **网页版**：用浏览器打开 `web/index.html` 就有一个实时转换的界面（也可以直接
+  用在线链接）。页面上的转换逻辑不是用 JavaScript 重写的，而是同一份 MoonBit
+  代码编译成 JS 跑在浏览器里
 
 ## 命令行用法
 

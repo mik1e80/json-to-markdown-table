@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/my_hackathon/web"
+package "mik1e80/json2md/web"
 
 // Values
 pub fn convert(String, String, Bool, Bool) -> String

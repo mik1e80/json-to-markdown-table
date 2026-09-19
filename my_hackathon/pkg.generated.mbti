@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/my_hackathon"
+package "mik1e80/json2md"
 
 // Values
 pub fn json_to_markdown_table(String) -> Result[String, String]

@@ -9,13 +9,13 @@
 //   "moonbitlang/x@0.4.6",
 // }
 
-name = "username/my_hackathon"
+name = "mik1e80/json2md"
 
 version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/mik1e80/json-to-markdown-table"
 
 license = "Apache-2.0"
 

@@ -24,7 +24,7 @@ MoonBit 实现 JSON 数组转换为 Markdown 表格的纯前端网页工具。
 | --- | --- | --- |
 | **网页** | `my_hackathon/web/` | 打开上面的在线链接，或在浏览器里打开 `web/index.html` |
 | **命令行** | `my_hackathon/cmd/main/` | `moon run cmd/main --file data.json` |
-| **库** | `my_hackathon/my_hackathon.mbt` | `@my_hackathon.json_to_markdown_table(input)` |
+| **库** | `my_hackathon/my_hackathon.mbt` | `@json2md.json_to_markdown_table(input)` |
 
 ## 能力
 

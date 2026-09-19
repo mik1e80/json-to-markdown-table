@@ -4,7 +4,7 @@
 //   1. 把 convert() 吐出来的 Markdown 表格还原成表格结构（下面那套迷你解析器）
 //   2. 把结果画到页面上
 //
-// 转换本身全在 dist/web.js 里（MoonBit 的 username/my_hackathon/web 包编译产物）。
+// 转换本身全在 dist/web.js 里（MoonBit 的 mik1e80/json2md/web 包编译产物）。
 
 // ── 迷你 Markdown 表格解析器 ────────────────────────────────────────────
 //

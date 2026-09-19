@@ -6,9 +6,9 @@
 
 ///|
 test "parse_align 认得三种对齐方式" {
-  assert_true(parse_align("left") == Some(@my_hackathon.Left))
-  assert_true(parse_align("center") == Some(@my_hackathon.Center))
-  assert_true(parse_align("right") == Some(@my_hackathon.Right))
+  assert_true(parse_align("left") == Some(@json2md.Left))
+  assert_true(parse_align("center") == Some(@json2md.Center))
+  assert_true(parse_align("right") == Some(@json2md.Right))
 }
 
 ///|
@@ -23,7 +23,7 @@ test "build_options 的默认值：展平、左对齐、按出现顺序" {
   match build_options(no_flatten=false, sort=false, align="left") {
     Ok(options) => {
       assert_true(options.flatten_objects)
-      assert_true(options.alignment == @my_hackathon.Left)
+      assert_true(options.alignment == @json2md.Left)
       assert_false(options.sort_columns)
     }
     Err(msg) => fail("默认选项不该失败：\{msg}")
@@ -48,10 +48,10 @@ test "build_options 打开 --sort" {
 
 ///|
 test "build_options 三种对齐都接得上" {
-  let aligns : Array[(String, @my_hackathon.Alignment)] = [
-    ("left", @my_hackathon.Left),
-    ("center", @my_hackathon.Center),
-    ("right", @my_hackathon.Right),
+  let aligns : Array[(String, @json2md.Alignment)] = [
+    ("left", @json2md.Left),
+    ("center", @json2md.Center),
+    ("right", @json2md.Right),
   ]
   for pair in aligns {
     let (name, expected) = pair

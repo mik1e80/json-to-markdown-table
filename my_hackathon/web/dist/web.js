@@ -417,15 +417,15 @@
     this.start = param1;
     this.end = param2;
   }
-  function _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE3Err(param0) {
+  function _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE3Err(param0) {
     this._0 = param0;
   }
-  _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE3Err.prototype.$tag = 0;
-  function _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE2Ok(param0) {
+  _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE3Err.prototype.$tag = 0;
+  function _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE2Ok(param0) {
     this._0 = param0;
   }
-  _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE2Ok.prototype.$tag = 1;
-  function _M0TP28username13my__hackathon7Options(param0, param1, param2) {
+  _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE2Ok.prototype.$tag = 1;
+  function _M0TP27mik1e807json2md7Options(param0, param1, param2) {
     this.flatten_objects = param0;
     this.alignment = param1;
     this.sort_columns = param2;
@@ -517,18 +517,18 @@
   const _M0FPC14json17int__pow10__table = [1n, 10n, 100n, 1000n, 10000n, 100000n, 1000000n, 10000000n, 100000000n, 1000000000n, 10000000000n, 100000000000n, 1000000000000n, 10000000000000n, 100000000000000n, 1000000000000000n];
   const _M0FPC14json12pow10__table = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000, 100000000000, 1e+012, 1e+013, 1e+014, 1e+015, 1e+016, 1e+017, 1e+018, 1e+019, 1e+020, 1e+021, 1e+022, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   const _M0FPC14json12checked__mulN6constrS1890 = 0n;
-  const _M0FP28username13my__hackathon12escape__cellN7_2abindS130 = "";
-  const _M0FP28username13my__hackathon11render__rowN7_2abindS131 = " | ";
-  const _M0FP28username13my__hackathon13render__tableN7_2abindS235 = "\n";
-  const _M0FP38username13my__hackathon3web12parse__alignN6constrS55 = 0;
-  const _M0FP38username13my__hackathon3web12parse__alignN6constrS56 = 1;
-  const _M0FP38username13my__hackathon3web12parse__alignN6constrS57 = 2;
+  const _M0FP27mik1e807json2md12escape__cellN7_2abindS130 = "";
+  const _M0FP27mik1e807json2md11render__rowN7_2abindS131 = " | ";
+  const _M0FP27mik1e807json2md13render__tableN7_2abindS235 = "\n";
+  const _M0FP37mik1e807json2md3web12parse__alignN6constrS55 = 0;
+  const _M0FP37mik1e807json2md3web12parse__alignN6constrS56 = 1;
+  const _M0FP37mik1e807json2md3web12parse__alignN6constrS57 = 2;
+  const _M0FPB4seed = _M0FPB12random__seed();
   const _M0FPC28internal7strconv17check__underscoreN25_2atransition__table__222S230 = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 0, 1, 2, 5];
   const _M0FPC28internal7strconv15parse__inf__nanN25_2atransition__table__304S312 = [14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 3, 4, 14, 14, 14, 14, 14, 14, 14, 7, 14, 14, 14, 14, 5, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 6, 14, 14, 14, 0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 8, 14, 14, 14, 14, 14, 1, 14, 14, 9, 14, 14, 14, 14, 14, 14, 14, 14, 10, 14, 14, 14, 14, 14, 14, 11, 14, 14, 14, 14, 14, 14, 14, 14, 14, 12, 14, 14, 14, 14, 14, 14, 14, 14, 13, 14, 1, 14, 14, 14, 14, 14, 14, 14];
-  const _M0FPB4seed = _M0FPB12random__seed();
-  const _M0FP28username13my__hackathon11parse__jsonN6constrS264 = new _M0DTPC16result6ResultGRPB4JsonsE3Err("JSON 内容不完整，意外结束");
-  const _M0FP28username13my__hackathon11parse__jsonN6constrS265 = new _M0DTPC16result6ResultGRPB4JsonsE3Err("嵌套层数太深，超出解析器上限");
-  const _M0FP28username13my__hackathon31json__to__markdown__table__withN6constrS267 = new _M0DTPC16result6ResultGssE2Ok("");
+  const _M0FP27mik1e807json2md11parse__jsonN6constrS264 = new _M0DTPC16result6ResultGRPB4JsonsE3Err("JSON 内容不完整，意外结束");
+  const _M0FP27mik1e807json2md11parse__jsonN6constrS265 = new _M0DTPC16result6ResultGRPB4JsonsE3Err("嵌套层数太深，超出解析器上限");
+  const _M0FP27mik1e807json2md31json__to__markdown__table__withN6constrS267 = new _M0DTPC16result6ResultGssE2Ok("");
   function _M0FPB13consume4__acc(acc, input) {
     const _p = (acc >>> 0) + ((Math.imul(input, -1028477379) | 0) >>> 0) | 0;
     const _p$2 = 17;
@@ -5450,7 +5450,7 @@
     }
     return buf.val;
   }
-  function _M0FP28username13my__hackathon16format__position(pos) {
+  function _M0FP27mik1e807json2md16format__position(pos) {
     const _string_builder = _M0MPB13StringBuilder21StringBuilder_2einner(16);
     _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, "第 ");
     _M0MPB13StringBuilder13write__objectGiE(_string_builder, pos.line);
@@ -5459,7 +5459,7 @@
     _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, " 列");
     return _string_builder.val;
   }
-  function _M0FP28username13my__hackathon11parse__json(input) {
+  function _M0FP27mik1e807json2md11parse__json(input) {
     let json;
     let _try_err;
     _L: {
@@ -5477,13 +5477,13 @@
       }
       switch (_try_err.$tag) {
         case 4: {
-          return _M0FP28username13my__hackathon11parse__jsonN6constrS264;
+          return _M0FP27mik1e807json2md11parse__jsonN6constrS264;
         }
         case 5: {
           const _InvalidChar = _try_err;
           const _pos = _InvalidChar._0;
           const _c = _InvalidChar._1;
-          const _tmp = _M0FP28username13my__hackathon16format__position(_pos);
+          const _tmp = _M0FP27mik1e807json2md16format__position(_pos);
           const _string_builder = _M0MPB13StringBuilder21StringBuilder_2einner(21);
           _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, "出现非法字符 '");
           _M0MPB13StringBuilder13write__objectGcE(_string_builder, _c);
@@ -5494,7 +5494,7 @@
           const _InvalidNumber = _try_err;
           const _pos$2 = _InvalidNumber._0;
           const _text = _InvalidNumber._1;
-          const _tmp$2 = _M0FP28username13my__hackathon16format__position(_pos$2);
+          const _tmp$2 = _M0FP27mik1e807json2md16format__position(_pos$2);
           const _string_builder$2 = _M0MPB13StringBuilder21StringBuilder_2einner(21);
           _M0IPB13StringBuilderPB6Logger13write__string(_string_builder$2, "数字写法非法：");
           _M0MPB13StringBuilder13write__objectGsE(_string_builder$2, _text);
@@ -5503,16 +5503,16 @@
         case 2: {
           const _InvalidIdentEscape = _try_err;
           const _pos$3 = _InvalidIdentEscape._0;
-          return new _M0DTPC16result6ResultGRPB4JsonsE3Err(`${_M0FP28username13my__hackathon16format__position(_pos$3)}转义序列非法（\\u 后面需要 4 位十六进制）`);
+          return new _M0DTPC16result6ResultGRPB4JsonsE3Err(`${_M0FP27mik1e807json2md16format__position(_pos$3)}转义序列非法（\\u 后面需要 4 位十六进制）`);
         }
         default: {
-          return _M0FP28username13my__hackathon11parse__jsonN6constrS265;
+          return _M0FP27mik1e807json2md11parse__jsonN6constrS265;
         }
       }
     }
     return new _M0DTPC16result6ResultGRPB4JsonsE2Ok(json);
   }
-  function _M0FP28username13my__hackathon10type__name(json) {
+  function _M0FP27mik1e807json2md10type__name(json) {
     switch (json.$tag) {
       case 0: {
         return "null";
@@ -5537,7 +5537,7 @@
       }
     }
   }
-  function _M0FP28username13my__hackathon12escape__cell(s) {
+  function _M0FP27mik1e807json2md12escape__cell(s) {
     const parts = [];
     const _bind = s.length;
     let _tmp = 0;
@@ -5597,9 +5597,9 @@
         break;
       }
     }
-    return _M0MPC15array5Array4joinGsE(parts, new _M0TPC16string10StringView(_M0FP28username13my__hackathon12escape__cellN7_2abindS130, 0, _M0FP28username13my__hackathon12escape__cellN7_2abindS130.length));
+    return _M0MPC15array5Array4joinGsE(parts, new _M0TPC16string10StringView(_M0FP27mik1e807json2md12escape__cellN7_2abindS130, 0, _M0FP27mik1e807json2md12escape__cellN7_2abindS130.length));
   }
-  function _M0FP28username13my__hackathon11render__row(cells) {
+  function _M0FP27mik1e807json2md11render__row(cells) {
     const _p = new Array(cells.length);
     const _p$2 = cells.length;
     let _tmp = 0;
@@ -5607,16 +5607,16 @@
       const _p$3 = _tmp;
       if (_p$3 < _p$2) {
         const _p$4 = cells[_p$3];
-        _p[_p$3] = _M0FP28username13my__hackathon12escape__cell(_p$4);
+        _p[_p$3] = _M0FP27mik1e807json2md12escape__cell(_p$4);
         _tmp = _p$3 + 1 | 0;
         continue;
       } else {
         break;
       }
     }
-    return `| ${_M0MPC15array5Array4joinGsE(_p, new _M0TPC16string10StringView(_M0FP28username13my__hackathon11render__rowN7_2abindS131, 0, _M0FP28username13my__hackathon11render__rowN7_2abindS131.length))} |`;
+    return `| ${_M0MPC15array5Array4joinGsE(_p, new _M0TPC16string10StringView(_M0FP27mik1e807json2md11render__rowN7_2abindS131, 0, _M0FP27mik1e807json2md11render__rowN7_2abindS131.length))} |`;
   }
-  function _M0FP28username13my__hackathon21collect__keys_2einner(rows, sort) {
+  function _M0FP27mik1e807json2md21collect__keys_2einner(rows, sort) {
     const _bind = [];
     const seen = _M0MPB3Map3MapGsuE(new _M0TPB9ArrayViewGUsuEE(_bind, 0, 0), undefined);
     const keys = [];
@@ -5653,7 +5653,7 @@
     }
     return keys;
   }
-  function _M0FP28username13my__hackathon14record__depths(obj, prefix, depth, depths) {
+  function _M0FP27mik1e807json2md14record__depths(obj, prefix, depth, depths) {
     const _it = _M0MPB3Map5iter2GsRPB4JsonE(obj);
     while (true) {
       const _bind = _M0MPB5Iter24nextGsRPB4JsonE(_it);
@@ -5681,14 +5681,14 @@
           const _Object = _v;
           const _inner = _Object._0;
           if (!(_inner.size === 0)) {
-            _M0FP28username13my__hackathon14record__depths(_inner, key, depth + 1 | 0, depths);
+            _M0FP27mik1e807json2md14record__depths(_inner, key, depth + 1 | 0, depths);
           }
         }
         continue;
       }
     }
   }
-  function _M0FP28username13my__hackathon15emit__flattened(obj, prefix, depth, depths, out) {
+  function _M0FP27mik1e807json2md15emit__flattened(obj, prefix, depth, depths, out) {
     const _it = _M0MPB3Map5iter2GsRPB4JsonE(obj);
     while (true) {
       const _bind = _M0MPB5Iter24nextGsRPB4JsonE(_it);
@@ -5709,7 +5709,7 @@
               _M0MPB3Map3setGsRPB4JsonE(out, key, _M0DTPB4Json4Null__);
             }
           } else {
-            _M0FP28username13my__hackathon15emit__flattened(_inner, key, depth + 1 | 0, depths, out);
+            _M0FP27mik1e807json2md15emit__flattened(_inner, key, depth + 1 | 0, depths, out);
           }
         } else {
           if (is_shallowest) {
@@ -5720,16 +5720,16 @@
       }
     }
   }
-  function _M0FP28username13my__hackathon12flatten__row(row) {
+  function _M0FP27mik1e807json2md12flatten__row(row) {
     const _bind = [];
     const depths = _M0MPB3Map3MapGsiE(new _M0TPB9ArrayViewGUsiEE(_bind, 0, 0), undefined);
-    _M0FP28username13my__hackathon14record__depths(row, "", 0, depths);
+    _M0FP27mik1e807json2md14record__depths(row, "", 0, depths);
     const _bind$2 = [];
     const out = _M0MPB3Map3MapGsRPB4JsonE(new _M0TPB9ArrayViewGUsRPB4JsonEE(_bind$2, 0, 0), undefined);
-    _M0FP28username13my__hackathon15emit__flattened(row, "", 0, depths, out);
+    _M0FP27mik1e807json2md15emit__flattened(row, "", 0, depths, out);
     return out;
   }
-  function _M0FP28username13my__hackathon14json__to__cell(json) {
+  function _M0FP27mik1e807json2md14json__to__cell(json) {
     _L: {
       switch (json.$tag) {
         case 0: {
@@ -5766,7 +5766,7 @@
     }
     return _M0MPC14json4Json17stringify_2einner(json, false, 0, undefined);
   }
-  function _M0FP28username13my__hackathon13render__table(headers, rows, alignment) {
+  function _M0FP27mik1e807json2md13render__table(headers, rows, alignment) {
     let separator;
     switch (alignment) {
       case 0: {
@@ -5781,7 +5781,7 @@
         separator = "---:";
       }
     }
-    const _tmp = _M0FP28username13my__hackathon11render__row(headers);
+    const _tmp = _M0FP27mik1e807json2md11render__row(headers);
     const _p = new Array(headers.length);
     const _p$2 = headers.length;
     let _tmp$2 = 0;
@@ -5795,7 +5795,7 @@
         break;
       }
     }
-    const lines = [_tmp, _M0FP28username13my__hackathon11render__row(_p)];
+    const lines = [_tmp, _M0FP27mik1e807json2md11render__row(_p)];
     const _bind = rows.length;
     let _tmp$3 = 0;
     while (true) {
@@ -5816,7 +5816,7 @@
             } else {
               const _Some = _bind$3;
               const _value = _Some;
-              _tmp$5 = _M0FP28username13my__hackathon14json__to__cell(_value);
+              _tmp$5 = _M0FP27mik1e807json2md14json__to__cell(_value);
             }
             _M0MPC15array5Array4pushGRPB3MapGsRPB4JsonEE(cells, _tmp$5);
             _tmp$4 = _$2 + 1 | 0;
@@ -5825,17 +5825,17 @@
             break;
           }
         }
-        _M0MPC15array5Array4pushGRPB3MapGsRPB4JsonEE(lines, _M0FP28username13my__hackathon11render__row(cells));
+        _M0MPC15array5Array4pushGRPB3MapGsRPB4JsonEE(lines, _M0FP27mik1e807json2md11render__row(cells));
         _tmp$3 = _ + 1 | 0;
         continue;
       } else {
         break;
       }
     }
-    return `${_M0MPC15array5Array4joinGsE(lines, new _M0TPC16string10StringView(_M0FP28username13my__hackathon13render__tableN7_2abindS235, 0, _M0FP28username13my__hackathon13render__tableN7_2abindS235.length))}\n`;
+    return `${_M0MPC15array5Array4joinGsE(lines, new _M0TPC16string10StringView(_M0FP27mik1e807json2md13render__tableN7_2abindS235, 0, _M0FP27mik1e807json2md13render__tableN7_2abindS235.length))}\n`;
   }
-  function _M0FP28username13my__hackathon31json__to__markdown__table__with(input, options) {
-    const _bind = _M0FP28username13my__hackathon11parse__json(input);
+  function _M0FP27mik1e807json2md31json__to__markdown__table__with(input, options) {
+    const _bind = _M0FP27mik1e807json2md11parse__json(input);
     let json;
     if (_bind.$tag === 1) {
       const _Ok = _bind;
@@ -5857,7 +5857,7 @@
           const _ = _tmp;
           if (_ < _bind$2) {
             const item = _items[_];
-            const kind = _M0FP28username13my__hackathon10type__name(item);
+            const kind = _M0FP27mik1e807json2md10type__name(item);
             if (item.$tag === 6) {
               const _Object = item;
               const _obj = _Object._0;
@@ -5887,7 +5887,7 @@
       default: {
         const _string_builder = _M0MPB13StringBuilder21StringBuilder_2einner(54);
         _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, "输入需要是对象数组或单个对象，当前是");
-        _M0MPB13StringBuilder13write__objectGsE(_string_builder, _M0FP28username13my__hackathon10type__name(json));
+        _M0MPB13StringBuilder13write__objectGsE(_string_builder, _M0FP27mik1e807json2md10type__name(json));
         return new _M0DTPC16result6ResultGssE3Err(_string_builder.val);
       }
     }
@@ -5900,7 +5900,7 @@
         const _p$3 = _tmp$2;
         if (_p$3 < _p$2) {
           const _p$4 = rows[_p$3];
-          _p[_p$3] = _M0FP28username13my__hackathon12flatten__row(_p$4);
+          _p[_p$3] = _M0FP27mik1e807json2md12flatten__row(_p$4);
           _tmp$2 = _p$3 + 1 | 0;
           continue;
         } else {
@@ -5911,51 +5911,51 @@
     } else {
       rows$3 = rows;
     }
-    const headers = _M0FP28username13my__hackathon21collect__keys_2einner(rows$3, options.sort_columns);
+    const headers = _M0FP27mik1e807json2md21collect__keys_2einner(rows$3, options.sort_columns);
     if (headers.length === 0) {
-      return _M0FP28username13my__hackathon31json__to__markdown__table__withN6constrS267;
+      return _M0FP27mik1e807json2md31json__to__markdown__table__withN6constrS267;
     }
-    return new _M0DTPC16result6ResultGssE2Ok(_M0FP28username13my__hackathon13render__table(headers, rows$3, options.alignment));
+    return new _M0DTPC16result6ResultGssE2Ok(_M0FP27mik1e807json2md13render__table(headers, rows$3, options.alignment));
   }
-  function _M0FP38username13my__hackathon3web12parse__align(name) {
+  function _M0FP37mik1e807json2md3web12parse__align(name) {
     switch (name) {
       case "left": {
-        return _M0FP38username13my__hackathon3web12parse__alignN6constrS55;
+        return _M0FP37mik1e807json2md3web12parse__alignN6constrS55;
       }
       case "center": {
-        return _M0FP38username13my__hackathon3web12parse__alignN6constrS56;
+        return _M0FP37mik1e807json2md3web12parse__alignN6constrS56;
       }
       case "right": {
-        return _M0FP38username13my__hackathon3web12parse__alignN6constrS57;
+        return _M0FP37mik1e807json2md3web12parse__alignN6constrS57;
       }
       default: {
         return undefined;
       }
     }
   }
-  function _M0FP38username13my__hackathon3web14build__options(align, flatten, sort) {
-    const _bind = _M0FP38username13my__hackathon3web12parse__align(align);
+  function _M0FP37mik1e807json2md3web14build__options(align, flatten, sort) {
+    const _bind = _M0FP37mik1e807json2md3web12parse__align(align);
     let alignment;
     if (_bind === undefined) {
       const _string_builder = _M0MPB13StringBuilder21StringBuilder_2einner(64);
       _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, "对齐方式只支持 left / center / right，收到的是「");
       _M0MPB13StringBuilder13write__objectGsE(_string_builder, align);
       _M0IPB13StringBuilderPB6Logger13write__string(_string_builder, "」");
-      return new _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE3Err(_string_builder.val);
+      return new _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE3Err(_string_builder.val);
     } else {
       const _Some = _bind;
       alignment = _Some;
     }
-    return new _M0DTPC16result6ResultGRP28username13my__hackathon7OptionssE2Ok(new _M0TP28username13my__hackathon7Options(flatten, alignment, sort));
+    return new _M0DTPC16result6ResultGRP27mik1e807json2md7OptionssE2Ok(new _M0TP27mik1e807json2md7Options(flatten, alignment, sort));
   }
-  function _M0FP38username13my__hackathon3web7convert(input, align, flatten, sort) {
-    const _bind = _M0FP38username13my__hackathon3web14build__options(align, flatten, sort);
+  function _M0FP37mik1e807json2md3web7convert(input, align, flatten, sort) {
+    const _bind = _M0FP37mik1e807json2md3web14build__options(align, flatten, sort);
     if (_bind.$tag === 0) {
       return "";
     } else {
       const _Ok = _bind;
       const _options = _Ok._0;
-      const _bind$2 = _M0FP28username13my__hackathon31json__to__markdown__table__with(input, _options);
+      const _bind$2 = _M0FP27mik1e807json2md31json__to__markdown__table__with(input, _options);
       if (_bind$2.$tag === 1) {
         const _Ok$2 = _bind$2;
         return _Ok$2._0;
@@ -5964,15 +5964,15 @@
       }
     }
   }
-  function _M0FP38username13my__hackathon3web14convert__error(input, align, flatten, sort) {
-    const _bind = _M0FP38username13my__hackathon3web14build__options(align, flatten, sort);
+  function _M0FP37mik1e807json2md3web14convert__error(input, align, flatten, sort) {
+    const _bind = _M0FP37mik1e807json2md3web14build__options(align, flatten, sort);
     if (_bind.$tag === 0) {
       const _Err = _bind;
       return _Err._0;
     } else {
       const _Ok = _bind;
       const _options = _Ok._0;
-      const _bind$2 = _M0FP28username13my__hackathon31json__to__markdown__table__with(input, _options);
+      const _bind$2 = _M0FP27mik1e807json2md31json__to__markdown__table__with(input, _options);
       if (_bind$2.$tag === 1) {
         return "";
       } else {
@@ -5981,6 +5981,6 @@
       }
     }
   }
-  globalThis.convert = _M0FP38username13my__hackathon3web7convert;
-  globalThis.convert_error = _M0FP38username13my__hackathon3web14convert__error;
+  globalThis.convert = _M0FP37mik1e807json2md3web7convert;
+  globalThis.convert_error = _M0FP37mik1e807json2md3web14convert__error;
 })();

@@ -47,7 +47,7 @@ index($0, "href=\"style.css\"") > 0 {
 }
 index($0, "src=\"dist/web.js\"") > 0 {
   print "    <script>"
-  print "      // MoonBit 编译产物：username/my_hackathon/web 导出的 convert / convert_error"
+  print "      // MoonBit 编译产物：mik1e80/json2md/web 导出的 convert / convert_error"
   while ((getline line < "dist/web.js") > 0) print line
   close("dist/web.js")
   print "    </script>"

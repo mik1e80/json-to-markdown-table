@@ -1,7 +1,7 @@
 // 给网页用的导出层。
 //
 // 这一层本身不做转换，只负责把库的 `Result[String, String]` 翻译成 JavaScript
-// 能接住的形状。转换逻辑全在 username/my_hackathon 里。
+// 能接住的形状。转换逻辑全在 mik1e80/json2md 里。
 //
 // `moon.pkg` 里用 link.js.exports 把下面两个 pub 函数暴露成全局变量，
 // 页面里直接调 convert(...) / convert_error(...)。
@@ -12,11 +12,11 @@
 /// 和 cmd/main/main.mbt 里的同名函数重复了几行，是有意的：那边解析的是命令行
 /// 参数，这边解析的是网页传来的字符串，两边报错文案也不一样。为这几行去动库的
 /// 公开 API 不划算。
-fn parse_align(name : String) -> @my_hackathon.Alignment? {
+fn parse_align(name : String) -> @json2md.Alignment? {
   match name {
-    "left" => Some(@my_hackathon.Left)
-    "center" => Some(@my_hackathon.Center)
-    "right" => Some(@my_hackathon.Right)
+    "left" => Some(@json2md.Left)
+    "center" => Some(@json2md.Center)
+    "right" => Some(@json2md.Right)
     _ => None
   }
 }
@@ -27,7 +27,7 @@ fn build_options(
   align : String,
   flatten : Bool,
   sort : Bool,
-) -> Result[@my_hackathon.Options, String] {
+) -> Result[@json2md.Options, String] {
   let alignment = match parse_align(align) {
     Some(alignment) => alignment
     None =>
@@ -56,7 +56,7 @@ pub fn convert(
   match build_options(align, flatten, sort) {
     Err(_) => ""
     Ok(options) =>
-      match @my_hackathon.json_to_markdown_table_with(input, options) {
+      match @json2md.json_to_markdown_table_with(input, options) {
         Ok(md) => md
         Err(_) => ""
       }
@@ -77,7 +77,7 @@ pub fn convert_error(
   match build_options(align, flatten, sort) {
     Err(msg) => msg
     Ok(options) =>
-      match @my_hackathon.json_to_markdown_table_with(input, options) {
+      match @json2md.json_to_markdown_table_with(input, options) {
         Ok(_) => ""
         Err(msg) => msg
       }

@@ -2,7 +2,7 @@
 
 ///|
 test "parse_json 能解析对象数组" {
-  match @my_hackathon.parse_json("[{\"name\":\"张三\",\"age\":20}]") {
+  match @json2md.parse_json("[{\"name\":\"张三\",\"age\":20}]") {
     Ok(json) => assert_true(json is Array(_))
     Err(msg) => fail("解析不该失败：\{msg}")
   }
@@ -10,7 +10,7 @@ test "parse_json 能解析对象数组" {
 
 ///|
 test "parse_json 能解析单个对象" {
-  match @my_hackathon.parse_json("{\"name\":\"张三\"}") {
+  match @json2md.parse_json("{\"name\":\"张三\"}") {
     Ok(json) => assert_true(json is Object(_))
     Err(msg) => fail("解析不该失败：\{msg}")
   }
@@ -18,7 +18,7 @@ test "parse_json 能解析单个对象" {
 
 ///|
 test "parse_json 对非法 JSON 返回错误" {
-  match @my_hackathon.parse_json("{\"name\":}") {
+  match @json2md.parse_json("{\"name\":}") {
     Ok(_) => fail("非法 JSON 不该解析成功")
     Err(msg) => assert_true(msg.length() > 0)
   }
@@ -27,7 +27,7 @@ test "parse_json 对非法 JSON 返回错误" {
 ///|
 /// 测试辅助：转换成功时返回表格，失败直接让测试失败。
 fn table_of(input : String) -> String raise {
-  match @my_hackathon.json_to_markdown_table(input) {
+  match @json2md.json_to_markdown_table(input) {
     Ok(md) => md
     Err(msg) => fail("转换不该失败：\{msg}")
   }
@@ -75,7 +75,7 @@ test "json_to_markdown_table 空数组得到空表格" {
 
 ///|
 test "json_to_markdown_table 数组含非对象时报出具体类型" {
-  match @my_hackathon.json_to_markdown_table("[{\"a\":1},2]") {
+  match @json2md.json_to_markdown_table("[{\"a\":1},2]") {
     Ok(md) => fail("数组里混入非对象不该成功：\{md}")
     Err(msg) => assert_true(msg.contains("数字"))
   }
@@ -91,7 +91,7 @@ test "json_to_markdown_table 单个对象转成一行表格" {
 
 ///|
 test "json_to_markdown_table 顶层是字符串时报出具体类型" {
-  match @my_hackathon.json_to_markdown_table("\"just a string\"") {
+  match @json2md.json_to_markdown_table("\"just a string\"") {
     Ok(md) => fail("字符串不该转成表格：\{md}")
     Err(msg) => assert_true(msg.contains("字符串"))
   }
@@ -99,7 +99,7 @@ test "json_to_markdown_table 顶层是字符串时报出具体类型" {
 
 ///|
 test "非法 JSON 会得到中文错误信息" {
-  match @my_hackathon.parse_json("[{\"a\":") {
+  match @json2md.parse_json("[{\"a\":") {
     Ok(_) => fail("非法 JSON 不该解析成功")
     Err(msg) => assert_true(msg.contains("不完整"))
   }
@@ -107,7 +107,7 @@ test "非法 JSON 会得到中文错误信息" {
 
 ///|
 test "非法字符会带上行列位置" {
-  match @my_hackathon.parse_json("[1, @]") {
+  match @json2md.parse_json("[1, @]") {
     Ok(_) => fail("非法 JSON 不该解析成功")
     Err(msg) => assert_true(msg.contains("行") && msg.contains("列"))
   }
@@ -123,11 +123,8 @@ test "json_to_markdown_table 中文键与中文值" {
 
 ///|
 /// 测试辅助：用指定选项转换，失败直接让测试失败。
-fn table_of_with(
-  input : String,
-  options : @my_hackathon.Options,
-) -> String raise {
-  match @my_hackathon.json_to_markdown_table_with(input, options) {
+fn table_of_with(input : String, options : @json2md.Options) -> String raise {
+  match @json2md.json_to_markdown_table_with(input, options) {
     Ok(md) => md
     Err(msg) => fail("转换不该失败：\{msg}")
   }
@@ -143,8 +140,8 @@ test "json_to_markdown_table 嵌套对象默认展平成点号列" {
 
 ///|
 test "json_to_markdown_table 关闭展平后压成一行 JSON" {
-  let no_flatten : @my_hackathon.Options = {
-    ..@my_hackathon.Options::default(),
+  let no_flatten : @json2md.Options = {
+    ..@json2md.Options::default(),
     flatten_objects: false,
   }
   assert_eq(
@@ -228,7 +225,7 @@ test "json_to_markdown_table 表头里的竖线也会被转义" {
 
 ///|
 test "json_to_markdown_table 数组里含 null 时报出类型" {
-  match @my_hackathon.json_to_markdown_table("[{\"a\":1},null]") {
+  match @json2md.json_to_markdown_table("[{\"a\":1},null]") {
     Ok(md) => fail("不该成功：\{md}")
     Err(msg) => assert_true(msg.contains("null"))
   }
@@ -246,12 +243,12 @@ test "json_to_markdown_table 单个空对象返回空串" {
 
 ///|
 test "json_to_markdown_table_with 可以按字典序排列表头" {
-  let options : @my_hackathon.Options = {
-    ..@my_hackathon.Options::default(),
+  let options : @json2md.Options = {
+    ..@json2md.Options::default(),
     sort_columns: true,
   }
   match
-    @my_hackathon.json_to_markdown_table_with(
+    @json2md.json_to_markdown_table_with(
       "[{\"name\":\"张三\",\"age\":20,\"city\":\"北京\"}]", options,
     ) {
     Ok(md) =>
@@ -264,17 +261,17 @@ test "json_to_markdown_table_with 可以按字典序排列表头" {
 
 ///|
 test "端到端居中与右对齐" {
-  let centered : @my_hackathon.Options = {
-    ..@my_hackathon.Options::default(),
-    alignment: @my_hackathon.Alignment::Center,
+  let centered : @json2md.Options = {
+    ..@json2md.Options::default(),
+    alignment: @json2md.Alignment::Center,
   }
   assert_eq(
     table_of_with("[{\"name\":\"张三\"}]", centered),
     "| name |\n| :---: |\n| 张三 |\n",
   )
-  let right : @my_hackathon.Options = {
-    ..@my_hackathon.Options::default(),
-    alignment: @my_hackathon.Alignment::Right,
+  let right : @json2md.Options = {
+    ..@json2md.Options::default(),
+    alignment: @json2md.Alignment::Right,
   }
   assert_eq(
     table_of_with("[{\"name\":\"张三\"}]", right),
@@ -295,7 +292,7 @@ test "嵌套过深会给出提示" {
     input = input + "]"
     j = j + 1
   }
-  match @my_hackathon.parse_json(input) {
+  match @json2md.parse_json(input) {
     Ok(_) => fail("这么深的嵌套不该解析成功")
     Err(msg) => assert_true(msg.contains("嵌套"))
   }

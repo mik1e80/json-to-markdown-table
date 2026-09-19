@@ -66,11 +66,11 @@ fn help_text(cmd : @argparse.Command) -> String {
 
 ///|
 /// 把 `--align` 的取值翻成 `Alignment`，认不出来时返回 `None`。
-fn parse_align(name : String) -> @my_hackathon.Alignment? {
+fn parse_align(name : String) -> @json2md.Alignment? {
   match name {
-    "left" => Some(@my_hackathon.Left)
-    "center" => Some(@my_hackathon.Center)
-    "right" => Some(@my_hackathon.Right)
+    "left" => Some(@json2md.Left)
+    "center" => Some(@json2md.Center)
+    "right" => Some(@json2md.Right)
     _ => None
   }
 }
@@ -83,7 +83,7 @@ fn build_options(
   no_flatten~ : Bool,
   sort~ : Bool,
   align~ : String,
-) -> Result[@my_hackathon.Options, String] {
+) -> Result[@json2md.Options, String] {
   let alignment = match parse_align(align) {
     Some(alignment) => alignment
     None =>
@@ -175,7 +175,7 @@ fn show_demo() -> Unit {
   println(sample)
   println("")
   println("示例输出：")
-  match @my_hackathon.json_to_markdown_table(sample) {
+  match @json2md.json_to_markdown_table(sample) {
     Ok(md) => println(md.trim_end())
     Err(msg) => println("转换失败：\{msg}")
   }
@@ -218,7 +218,7 @@ fn run(piped : String?) -> Result[Unit, String] raise {
       return Ok(())
     }
   }
-  match @my_hackathon.json_to_markdown_table_with(text, options) {
+  match @json2md.json_to_markdown_table_with(text, options) {
     Ok(md) => {
       println(md.trim_end())
       Ok(())

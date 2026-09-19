@@ -250,9 +250,9 @@ web 导出层白盒测试 11 + README 里这两段可执行示例。
 
 ## 项目结构
 
-- `my_hackathon.mbt` — 库实现
-- `my_hackathon_test.mbt` — 公开 API 的黑盒测试
-- `my_hackathon_wbtest.mbt` — 内部函数的白盒测试
+- `json2md.mbt` — 库实现
+- `json2md_test.mbt` — 公开 API 的黑盒测试
+- `json2md_wbtest.mbt` — 内部函数的白盒测试
 - `cmd/main/main.mbt` — 命令行工具
 - `cmd/main/main_wbtest.mbt` — 参数解析、选项组装、BOM 剥离的测试
 - `web/index.html`、`web/style.css`、`web/app.js` — 网页界面

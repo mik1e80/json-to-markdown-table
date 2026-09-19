@@ -4,7 +4,7 @@ MoonBit 实现 JSON 数组转换为 Markdown 表格的纯前端网页工具。
 
 **在线试用：<https://mik1e80.github.io/json-to-markdown-table/>**
 
-![网页界面](my_hackathon/web/screenshot.png)
+![网页界面](json2md/web/screenshot.png)
 
 ---
 
@@ -22,9 +22,9 @@ MoonBit 实现 JSON 数组转换为 Markdown 表格的纯前端网页工具。
 
 | 形态 | 位置 | 怎么用 |
 | --- | --- | --- |
-| **网页** | `my_hackathon/web/` | 打开上面的在线链接，或在浏览器里打开 `web/index.html` |
-| **命令行** | `my_hackathon/cmd/main/` | `moon run cmd/main --file data.json` |
-| **库** | `my_hackathon/my_hackathon.mbt` | `@json2md.json_to_markdown_table(input)` |
+| **网页** | `json2md/web/` | 打开上面的在线链接，或在浏览器里打开 `web/index.html` |
+| **命令行** | `json2md/cmd/main/` | `moon run cmd/main --file data.json` |
+| **库** | `json2md/json2md.mbt` | `@json2md.json_to_markdown_table(input)` |
 
 ## 能力
 
@@ -39,12 +39,12 @@ MoonBit 实现 JSON 数组转换为 Markdown 表格的纯前端网页工具。
 ## 文档
 
 详细的用法、API、转换规则和开发说明都在
-[`my_hackathon/README.mbt.md`](my_hackathon/README.mbt.md)。
+[`json2md/README.mbt.md`](json2md/README.mbt.md)。
 
 ## 开发
 
 ```bash
-cd my_hackathon
+cd json2md
 moon test                  # 跑测试（99 个）
 bash web/build.sh          # 重新编译网页用的 JS
 bash web/pack.sh           # 打包成单个 HTML，方便发给别人

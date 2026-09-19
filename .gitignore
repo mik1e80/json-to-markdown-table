@@ -1,24 +1,28 @@
-# MoonBit编译输出
+# MoonBit 编译输出
 _build/
 .mooncakes/
 _coverage/
+target/
+target
+.moonagent/
+
+# 测试覆盖率文件
+moonbit-coverage-*.txt
 
 # 打包好的单文件网页：生成物，用来发给别人，不进版本库
 # （web/dist/web.js 是有意提交的，见 README 的「网页版」一节）
 #
 # 用 **/ 开头，不写死顶层目录名。这条规则原来写的是
-# my_hackathon/web/dist/*.html，目录改名成 json2md 之后就不匹配了，
-# 生成物被 git add -A 带了进去。注意光写 web/dist/*.html 也不行：
-# pattern 中间带斜杠时是锚定到仓库根的，匹配不到子目录里的同名路径。
+# my_hackathon/web/dist/*.html，目录改名之后就不匹配了，生成物被
+# git add -A 带了进去。注意光写 web/dist/*.html 也不行：pattern 中间
+# 带斜杠时是锚定到仓库根的，匹配不到子目录里的同名路径。
 **/web/dist/*.html
 
-# 测试覆盖率文件
-moonbit-coverage-*.txt
-
-# VSCode临时文件
+# 编辑器 / 系统
+.DS_Store
 .vscode/
 *.swp
 *.swo
 
-# 编辑器/AI 工具的本地配置
+# 编辑器 / AI 工具的本地配置
 .claude/

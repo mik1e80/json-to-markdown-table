@@ -1,6 +1,6 @@
 name: 部署网页版到 GitHub Pages
 
-# 把 json2md/web/ 发布成一个网址，方便直接把链接发给别人。
+# 把 web/ 发布成一个网址，方便直接把链接发给别人。
 #
 # 这里不装 moon 工具链：dist/web.js 是提交进仓库的编译产物，CI 只需要把
 # 页面要用的几个文件挑出来。所以改完 MoonBit 代码记得先在本地跑
@@ -33,10 +33,10 @@ jobs:
       - name: 准备站点文件
         run: |
           mkdir -p _site/dist
-          cp json2md/web/index.html _site/
-          cp json2md/web/style.css   _site/
-          cp json2md/web/app.js      _site/
-          cp json2md/web/dist/web.js _site/dist/
+          cp web/index.html _site/
+          cp web/style.css   _site/
+          cp web/app.js      _site/
+          cp web/dist/web.js _site/dist/
 
       - uses: actions/configure-pages@v6
 

@@ -40,7 +40,7 @@ body {
 
 .page-head p {
   margin: 0;
-  max-width: 76ch;
+  max-width: 80ch;
   color: var(--muted);
 }
 
@@ -52,16 +52,25 @@ code {
   font-size: 0.9em;
 }
 
+/* 上半部分是输入 + 预览并排，下半部分是 Markdown 源码 */
 .panes {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.row {
+  flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   min-height: 0;
 }
 
 @media (max-width: 900px) {
-  .panes {
+  .row {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -202,6 +211,63 @@ textarea {
 
 .error[hidden] {
   display: none;
+}
+
+/* Markdown 源码区 */
+.output {
+  flex: 0 0 auto;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.actions button {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.actions button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.actions button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.actions button:disabled {
+  color: #b6bcc6;
+  cursor: not-allowed;
+}
+
+.actions button.done {
+  border-color: var(--ok);
+  color: var(--ok);
+  background: #eef8f2;
+}
+
+/* 源码不折行：Markdown 表格本来就是一行一条，折了就看不出结构了 */
+#source {
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  max-height: 180px;
+  background: #fbfcfd;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 2;
 }
 
 .page-foot {

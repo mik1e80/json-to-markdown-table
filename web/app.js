@@ -150,6 +150,24 @@ const previewEl = document.getElementById("preview");
 const errorEl = document.getElementById("error");
 const statusEl = document.getElementById("status");
 const examplesEl = document.getElementById("examples");
+const sourceEl = document.getElementById("source");
+const copyBtn = document.getElementById("copy");
+const downloadBtn = document.getElementById("download");
+
+/// 当前生成的 Markdown，复制和下载都从这里取。
+let currentMarkdown = "";
+
+/// 把生成的 Markdown 放进源码区。
+///
+/// 没有内容时（解析失败、空表格）连同复制/下载按钮一起禁用——
+/// 让人一眼看出「现在没东西可拿」，而不是点了没反应。
+function setOutput(markdown) {
+  currentMarkdown = markdown;
+  sourceEl.textContent = markdown;
+  const hasOutput = markdown !== "";
+  copyBtn.disabled = !hasOutput;
+  downloadBtn.disabled = !hasOutput;
+}
 
 function render() {
   const json = inputEl.value;
@@ -168,6 +186,7 @@ function render() {
     errorEl.hidden = false;
     statusEl.textContent = "解析失败";
     statusEl.className = "status status-error";
+    setOutput("");
     return;
   }
 
@@ -179,12 +198,14 @@ function render() {
     previewEl.appendChild(p);
     statusEl.textContent = "空表格";
     statusEl.className = "status";
+    setOutput("");
     return;
   }
 
   previewEl.appendChild(renderTable(table));
   statusEl.textContent = `${table.rows.length} 行 × ${table.headers.length} 列`;
   statusEl.className = "status status-ok";
+  setOutput(md);
 }
 
 /// 输入时不要每敲一个键就重算，稍微等一下。
@@ -206,6 +227,82 @@ for (const [key, example] of Object.entries(EXAMPLES)) {
 }
 
 inputEl.addEventListener("input", scheduleRender);
+
+// ── 复制与下载 ──────────────────────────────────────────────────────────
+
+/// 复制文本到剪贴板，成功返回 true。
+///
+/// 先用 navigator.clipboard，它需要「安全上下文」；这个页面是要能双击
+/// 打开（file://）的，不能假设有 https，所以下面留了一条 execCommand 的
+/// 老路兜底。execCommand 虽然已废弃，但目前所有浏览器都还支持。
+async function copyText(text) {
+  if (navigator.clipboard !== undefined) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // 被权限或安全上下文拦下了，走兜底
+    }
+  }
+
+  const scratch = document.createElement("textarea");
+  scratch.value = text;
+  scratch.setAttribute("readonly", "");
+  // 放在视口外，避免复制时页面跳一下
+  scratch.style.position = "fixed";
+  scratch.style.top = "-1000px";
+  document.body.appendChild(scratch);
+  // 必须先 focus 再 select：execCommand("copy") 要求文档有焦点，
+  // 少了这一步在某些情况下选区建不起来，复制会静默失败
+  scratch.focus();
+  scratch.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  scratch.remove();
+  return ok;
+}
+
+/// 按钮上短暂显示一句反馈，然后恢复原文案。
+function flash(button, text) {
+  if (button.dataset.timer !== undefined) {
+    clearTimeout(Number(button.dataset.timer));
+  } else {
+    button.dataset.label = button.textContent;
+  }
+  button.textContent = text;
+  button.classList.add("done");
+  button.dataset.timer = String(
+    setTimeout(() => {
+      button.textContent = button.dataset.label;
+      button.classList.remove("done");
+      delete button.dataset.timer;
+    }, 1500)
+  );
+}
+
+copyBtn.addEventListener("click", async () => {
+  const ok = await copyText(currentMarkdown);
+  flash(copyBtn, ok ? "已复制" : "复制失败");
+});
+
+downloadBtn.addEventListener("click", () => {
+  const blob = new Blob([currentMarkdown], {
+    type: "text/markdown;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "table.md";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  // 立刻 revoke 有些浏览器会来不及读，挪到下一轮事件循环
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+});
 
 inputEl.value = EXAMPLES.nested.json;
 render();

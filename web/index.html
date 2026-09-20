@@ -10,33 +10,49 @@
     <header class="page-head">
       <h1>JSON → Markdown 表格</h1>
       <p>
-        左边贴 JSON，右边实时出表格。转换逻辑是 MoonBit 写的
-        （<code>mik1e80/json2md</code>），这个页面只是它的一个前端，
-        <code>dist/web.js</code> 就是 <code>moon build --target js</code> 的产物。
+        左边贴 JSON，右边实时出表格，下面是可以直接拿去用的 Markdown 源码。
+        转换逻辑是 MoonBit 写的（<code>mik1e80/json2md</code>），这个页面只是它的
+        一个前端，<code>dist/web.js</code> 就是 <code>moon build --target js</code>
+        的产物。
       </p>
     </header>
 
     <main class="panes">
-      <section class="pane">
-        <div class="pane-head">
-          <h2>JSON 输入</h2>
-          <div class="examples" id="examples"></div>
-        </div>
-        <textarea id="input" spellcheck="false" autocomplete="off"></textarea>
-      </section>
+      <div class="row">
+        <section class="pane">
+          <div class="pane-head">
+            <h2>JSON 输入</h2>
+            <div class="examples" id="examples"></div>
+          </div>
+          <textarea id="input" spellcheck="false" autocomplete="off"></textarea>
+        </section>
 
-      <section class="pane">
+        <section class="pane">
+          <div class="pane-head">
+            <h2>表格预览</h2>
+            <span class="status" id="status"></span>
+          </div>
+          <div class="preview" id="preview"></div>
+          <p class="error" id="error" hidden></p>
+        </section>
+      </div>
+
+      <section class="pane output">
         <div class="pane-head">
-          <h2>表格预览</h2>
-          <span class="status" id="status"></span>
+          <h2>Markdown 源码</h2>
+          <div class="actions">
+            <button type="button" id="copy">复制</button>
+            <button type="button" id="download">下载 .md</button>
+          </div>
         </div>
-        <div class="preview" id="preview"></div>
-        <p class="error" id="error" hidden></p>
+        <pre id="source"></pre>
       </section>
     </main>
 
     <footer class="page-foot">
-      <span>嵌套对象默认展平成 <code>父.子</code> 列；竖线、反斜杠、换行都会自动转义。</span>
+      <span
+        >嵌套对象默认展平成 <code>父.子</code> 列；竖线、反斜杠、换行都会自动转义。</span
+      >
     </footer>
 
     <!-- MoonBit 编译出来的转换函数（挂成全局的 convert / convert_error） -->
